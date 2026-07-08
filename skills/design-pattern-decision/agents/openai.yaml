@@ -1,0 +1,7 @@
+interface:
+  display_name: "Design Pattern Decision"
+  short_description: "Classify design pattern fit"
+  default_prompt: "Use $design-pattern-decision to classify which design pattern fits this plan or code."
+
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Terraform"
+  short_description: "Guardrails for scoped Terraform changes"
+  default_prompt: "Use $terraform to implement and validate scoped Terraform changes."

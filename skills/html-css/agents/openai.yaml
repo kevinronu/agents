@@ -1,0 +1,4 @@
+interface:
+  display_name: "HTML/CSS"
+  short_description: "Guardrails for scoped markup and style changes"
+  default_prompt: "Use $html-css to implement and validate scoped HTML/CSS changes."

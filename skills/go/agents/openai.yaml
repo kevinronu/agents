@@ -1,0 +1,4 @@
+interface:
+  display_name: "Go"
+  short_description: "Guardrails for scoped Go code changes"
+  default_prompt: "Use $go to implement and validate a scoped Go code change."

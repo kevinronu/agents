@@ -1,0 +1,4 @@
+interface:
+  display_name: "TypeScript"
+  short_description: "Guardrails for scoped TypeScript changes"
+  default_prompt: "Use $typescript to implement and validate scoped TypeScript changes."

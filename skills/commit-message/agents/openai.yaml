@@ -1,0 +1,4 @@
+interface:
+  display_name: "Commit Message"
+  short_description: "Guardrails for staged commit messages"
+  default_prompt: "Use $commit-message to generate a commit message from staged changes."
