@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Enforce strict guardrails for implementing and validating TypeScript changes. Use when Codex writes, modifies, reviews, formats, scopes, type-checks, or tests TypeScript code, TSX/JSX code, JavaScript in TypeScript-owned modules, Vue script blocks, frontend modules, or public TypeScript contracts, including deriving the affected app, module, or component scope from changed files before running checks.
+description: Enforce strict guardrails for implementing and validating TypeScript changes. Use when Codex writes, modifies, reviews, formats, scopes, type-checks, or tests TypeScript code, TSX/JSX code, JavaScript in TypeScript-owned modules, Vue script blocks, frontend modules, or public TypeScript contracts, including deriving the affected app, module, or component scope from changed files before running checks and orchestrating design-pattern classification when TypeScript code may need pattern-level structure.
 ---
 
 # TypeScript
@@ -51,6 +51,31 @@ Report the scoped files or ownership units, any escalations, and assumptions whe
 - For existing code, request confirmation before changing design patterns.
 - Keep domain logic independent from frameworks and runtime concerns.
 - Prefer existing project helpers, stores, composables, services, and API clients over new abstractions.
+
+## Design Patterns
+
+Before choosing the TypeScript design, invoke `design-pattern-decision` with this input contract:
+
+```text
+User request:
+Language:
+Relevant files, package, module, or component:
+Existing local conventions:
+Plan, tentative code, or current code summary:
+Abstractions being considered or already present:
+Variation points:
+Expected future cases:
+Testing impact:
+```
+
+Set `Language` to `typescript`.
+
+Continue based on `Recommended pattern`:
+
+- `none`: continue with this TypeScript skill only.
+- any other pattern: use it to develop or adjust the plan, tentative code, current code, or intended change. If a matching `typescript-pattern-<recommended-pattern>` skill is available, invoke it and treat its result as a pattern skeleton. Otherwise, apply the pattern using general TypeScript knowledge. Then continue in this TypeScript skill for implementation rules, type-checking, tests, formatting, and validation.
+
+Do not invoke `design-pattern-decision` again after returning from a TypeScript pattern skill unless the plan, tentative code, or current code summary materially changes.
 
 ### Async
 
