@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Singleton"
+  short_description: "Go Singleton skeleton"
+  default_prompt: "Use $go-pattern-singleton to load a lightweight Go Singleton pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false

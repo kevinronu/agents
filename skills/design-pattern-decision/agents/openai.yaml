@@ -1,7 +1,7 @@
 interface:
   display_name: "Design Pattern Decision"
-  short_description: "Classify design pattern fit"
-  default_prompt: "Use $design-pattern-decision to classify which design pattern fits this plan or code."
+  short_description: "Classify which design pattern fits"
+  default_prompt: "Use $design-pattern-decision to classify which design pattern fits a plan or code sample. Usually invoke it from a language skill; also use it when the user explicitly asks for the classification."
 
 policy:
   allow_implicit_invocation: false

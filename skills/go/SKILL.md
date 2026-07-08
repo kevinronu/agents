@@ -1,6 +1,6 @@
 ---
 name: go
-description: Enforce strict guardrails for implementing and validating Go code changes. Use when Codex writes, modifies, reviews, tests, formats, scopes, or statically analyzes Go code, including deriving the affected Go package scope from changed files before running quality commands.
+description: Enforce strict guardrails for implementing and validating Go code changes. Use when Codex writes, modifies, reviews, tests, formats, scopes, or statically analyzes Go code, including deriving the affected Go package scope from changed files before running quality commands and orchestrating design-pattern classification when Go code may need pattern-level structure.
 ---
 
 # Go
@@ -89,10 +89,34 @@ raw := fmt.Sprintf("value=%s", value)
 ## Architecture
 
 - Respect clean architecture boundaries.
-- Introduce design patterns only when they clearly match the problem.
 - For existing code, request confirmation before introducing or changing a design pattern.
 - Define small interfaces at the point of use.
 - Avoid `init()` unless runtime constraints require it.
+
+## Design Patterns
+
+Before choosing the Go design, invoke `design-pattern-decision` with this input contract:
+
+```text
+User request:
+Language:
+Relevant files, package, module, or component:
+Existing local conventions:
+Plan, tentative code, or current code summary:
+Abstractions being considered or already present:
+Variation points:
+Expected future cases:
+Testing impact:
+```
+
+Set `Language` to `go`.
+
+Continue based on `Recommended pattern`:
+
+- `none`: continue with this Go skill only.
+- any other pattern: use it to develop or adjust the plan, tentative code, current code, or intended change. If a matching `go-pattern-<recommended-pattern>` skill is available, invoke it and treat its result as a pattern skeleton. Otherwise, apply the pattern using general Go knowledge. Then continue in this Go skill for implementation rules, tests, formatting, and validation.
+
+Do not invoke `design-pattern-decision` again after returning from a Go pattern skill unless the plan, tentative code, or current code summary materially changes.
 
 ## Concurrency
 

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Abstract Factory"
+  short_description: "Go Abstract Factory skeleton"
+  default_prompt: "Use $go-pattern-abstract-factory to load a lightweight Go Abstract Factory pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false

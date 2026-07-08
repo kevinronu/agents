@@ -1,6 +1,6 @@
 ---
 name: design-pattern-decision
-description: Internal design-pattern classifier. Use only when another active skill, such as Go or TypeScript, explicitly invokes this skill with a plan, tentative code, current code, or intended change to classify. Return only the design pattern that best fits, or none. Do not self-select based on code content; orchestrating language skills own detection, routing, implementation, validation, and follow-up skill selection.
+description: Internal design-pattern classifier. Use primarily when another active language skill invokes this skill with a plan, tentative code, current code, or intended change to classify; also use when the user explicitly asks which design pattern fits or whether no formal pattern should be used. Return only the classification. Do not trigger this skill just because the codebase contains pattern-related code; a language skill must invoke it, and that language skill keeps ownership of routing and follow-up.
 ---
 
 # Design Pattern Decision
@@ -11,10 +11,10 @@ Act as a language-agnostic design-pattern classifier for a received plan, tentat
 
 Use this skill only to answer:
 
-- Which design pattern fits this plan or code?
-- If no formal design pattern fits, should the answer be `none`?
+- Which design pattern fits?
+- Should the answer be `none`?
 
-Use this skill only when an orchestrating skill explicitly asks for a design-pattern classification. Do not self-select from the user request or codebase.
+Use this skill primarily when another skill explicitly asks for classification. Also use it when the user explicitly asks for that classification. Do not trigger it from general code inspection alone.
 
 This skill does not route to other skills, implement changes, validate code, or decide language-specific structure.
 
@@ -427,4 +427,6 @@ Risk if misapplied: unnecessary interface if only one channel exists or future c
 ## Common Situations
 
 - API request processing with ordered checks such as rate limiting, auth, and handler execution maps to `chain-of-responsibility` when each step is independent and has a clear stop/continue contract.
-- Report generation with many configuration options maps to `builder` when valid combinations matter; multiple output formats such as PDF, CSV, and XLSX map to `strategy` when formatting behavior varies behind a stable caller.
+- Report generation with many configuration options maps to `builder` when valid combinations, defaults, or assembly steps matter.
+- Report generation maps to `strategy` when the main variation is a single rendering or calculation policy behind a stable caller.
+- Report generation maps to `bridge` when report type and output format vary independently, such as invoices and reports that can each be exported as PDF, CSV, or HTML.

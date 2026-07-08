@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Prototype"
+  short_description: "Go Prototype skeleton"
+  default_prompt: "Use $go-pattern-prototype to load a lightweight Go Prototype pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Bridge"
+  short_description: "Go Bridge skeleton"
+  default_prompt: "Use $go-pattern-bridge to load a lightweight Go Bridge pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false

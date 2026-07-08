@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Factory Method"
+  short_description: "Go Factory Method skeleton"
+  default_prompt: "Use $go-pattern-factory-method to load a lightweight Go Factory Method pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false

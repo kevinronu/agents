@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Adapter"
+  short_description: "Go Adapter skeleton"
+  default_prompt: "Use $go-pattern-adapter to load a lightweight Go Adapter pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false

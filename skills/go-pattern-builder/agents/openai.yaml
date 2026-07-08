@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Builder"
+  short_description: "Go Builder skeleton"
+  default_prompt: "Use $go-pattern-builder to load a lightweight Go Builder pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false
