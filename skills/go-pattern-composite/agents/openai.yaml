@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Composite"
+  short_description: "Go Composite pattern skeleton"
+  default_prompt: "Use $go-pattern-composite to load a lightweight Go Composite pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false
