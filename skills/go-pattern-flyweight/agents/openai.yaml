@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Flyweight"
+  short_description: "Go Flyweight pattern skeleton"
+  default_prompt: "Use $go-pattern-flyweight to load a lightweight Go Flyweight pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false
