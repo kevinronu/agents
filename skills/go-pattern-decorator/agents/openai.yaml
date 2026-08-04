@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Decorator"
+  short_description: "Go Decorator pattern skeleton"
+  default_prompt: "Use $go-pattern-decorator to load a lightweight Go Decorator pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false
