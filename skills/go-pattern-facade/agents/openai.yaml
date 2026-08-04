@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Facade"
+  short_description: "Go Facade pattern skeleton"
+  default_prompt: "Use $go-pattern-facade to load a lightweight Go Facade pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false
