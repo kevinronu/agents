@@ -11,9 +11,9 @@ Provide a file-by-file Go skeleton for Adapter.
 
 ## Non-Obvious Go Notes
 
-- Keep the client-owned contract in a small `port` or `target` package so the rest of the code depends on the interface the client expects, not on vendor or legacy APIs.
-- Keeping the client in `target` and the contract in `port` makes ownership explicit: the client owns the abstraction even when adapters live elsewhere.
-- Let backends that already match the port implement it directly. Only incompatible backends need adapters.
+- Keep the interface the client expects in a small `target` package so the rest of the code depends on that contract, not on vendor or legacy APIs.
+- Keep the client in its own `client` package. This makes the roles explicit: `target` defines the expected shape, while `client` consumes only that shape.
+- Let backends that already match the target implement it directly. Only incompatible backends need adapters.
 - Keep the adapter focused on translation: input shape, output shape, units, names, and error mapping. Do not move business policy into the adapter.
 - If the adaptee is not yours to change, model it in a separate package so the adapter boundary stays explicit.
 - Prefer one adapter per incompatible backend or protocol instead of one large adapter that branches on many backend shapes.
@@ -27,37 +27,37 @@ Provide a file-by-file Go skeleton for Adapter.
 │   └── <legacy-service>.go
 ├── adapter/
 │   └── <legacy-adapter>.go
+├── client/
+│   └── service.go
 ├── native/
 │   └── service.go
-├── port/
-│   └── processor.go
 └── target/
-    └── service.go
+    └── processor.go
 ```
 
 ## File-By-File Skeleton
 
-### `port/processor.go`
+### `target/processor.go`
 
 ```go
-package port
+package target
 
-// PaymentProcessor is the client-owned port. Native backends and adapters plug in behind it.
+// PaymentProcessor is the target interface. Native backends and adapters both reach it.
 type PaymentProcessor interface {
 	Pay(amountCents int) (string, error)
 }
 ```
 
-### `target/service.go`
+### `client/service.go`
 
 ```go
-package target
+package client
 
-import "<module>/<pattern-root>/port"
+import "<module>/<pattern-root>/target"
 
-// PaymentService is the client: it depends only on the port.
+// PaymentService is the client: it depends only on the target interface.
 type PaymentService struct {
-	Processor port.PaymentProcessor
+	Processor target.PaymentProcessor
 }
 
 func (s PaymentService) Buy(amountCents int) (string, error) {
@@ -84,7 +84,7 @@ func (Service) Pay(amountCents int) (string, error) {
 ```go
 package adaptee
 
-// <legacyServiceName> is useful existing code whose API does not match the port.
+// <legacyServiceName> is useful existing code whose API does not match the target.
 type <legacyServiceName> struct{}
 
 func (<legacyServiceName>) Charge(dollars float64) bool {
@@ -104,12 +104,12 @@ import (
 	"<module>/<pattern-root>/adaptee"
 )
 
-// <legacyAdapterName> connects the adaptee to the client-owned port.
+// <legacyAdapterName> connects the adaptee to the target.
 type <legacyAdapterName> struct {
 	Adaptee adaptee.<legacyServiceName>
 }
 
-// Pay translates the call and result between the port and the adaptee API.
+// Pay translates the call and result between the target and the adaptee API.
 func (a <legacyAdapterName>) Pay(amountCents int) (string, error) {
 	dollars := float64(amountCents) / 100
 
@@ -132,13 +132,13 @@ import (
 
 	"<module>/<pattern-root>/adaptee"
 	"<module>/<pattern-root>/adapter"
+	"<module>/<pattern-root>/client"
 	"<module>/<pattern-root>/native"
-	"<module>/<pattern-root>/target"
 )
 
 func main() {
-	// A backend that already fits the port is used directly.
-	nativePayment := target.PaymentService{
+	// A backend that already fits the target is used directly.
+	nativePayment := client.PaymentService{
 		Processor: native.Service{},
 	}
 
@@ -149,8 +149,8 @@ func main() {
 
 	fmt.Println("no adapter:", receipt)
 
-	// A backend whose API does not match the port needs an adapter.
-	legacyPayment := target.PaymentService{
+	// A backend whose API does not match the target needs an adapter.
+	legacyPayment := client.PaymentService{
 		Processor: adapter.<legacyAdapterName>{
 			Adaptee: adaptee.<legacyServiceName>{},
 		},
