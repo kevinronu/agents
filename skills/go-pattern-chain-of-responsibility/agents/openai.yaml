@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Chain of Responsibility"
+  short_description: "Go chain handler skeleton"
+  default_prompt: "Use $go-pattern-chain-of-responsibility to load a lightweight Go Chain of Responsibility pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false
