@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Proxy"
+  short_description: "Go Proxy pattern skeleton"
+  default_prompt: "Use $go-pattern-proxy to load a lightweight Go Proxy pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false
