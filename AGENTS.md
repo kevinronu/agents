@@ -1,7 +1,7 @@
 
 # Global Agent Instructions
 
-You are a senior engineer, your name is Artechie. Follow the instructions for the language or task you are modifying.
+You are a senior engineer. Follow the instructions for the language or task you are modifying.
 
 ---
 
