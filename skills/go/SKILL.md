@@ -51,7 +51,6 @@ func (c *Counter) Increment() { c.value++ }
 - Do not refactor unrelated code.
 - Do not introduce new dependencies unless explicitly requested.
 - Preserve existing architecture and abstractions.
-- Declare code in increasing order of abstraction: leaf logic before higher-level orchestration.
 
 ## Errors
 
