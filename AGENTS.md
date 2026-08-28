@@ -38,6 +38,8 @@ These rules are mandatory and take precedence over repository-level skills. Repo
 
 ### Comments
 
+This section governs explanatory comments. Documentation on exported identifiers is a separate category, covered below.
+
 Default to no comment. A comment is a last resort, not a habit.
 
 > "The proper use of comments is to compensate for our failure to express ourselves in code. Note that I used the word failure. I meant it. Comments are always failures of either our languages or our abilities."
@@ -63,13 +65,19 @@ Never write:
 - Change logs, dates, migration notes, or author attributions. Git already holds that history.
 - Commented-out code. Delete it.
 
-Keep comments short and in plain English around a B2 level. Update or delete any comment your change makes false: an inaccurate comment is worse than no comment.
+Length is a hard limit, not a preference. One line. Two only when the why genuinely needs them, never a paragraph. If the explanation does not fit, the code or the name is the problem: fix that first. If it still does not fit, it is not a comment: it belongs in the commit message, the pull request, or project documentation.
+
+Do not narrate your reasoning. State the constraint that remains, not how you reached it. Name an option you rejected only when that option is the point of the comment, and in one clause.
+
+Write in plain English around a B2 level. Update or delete any comment your change makes false: an inaccurate comment is worse than no comment. These rules govern the comments you write or touch; do not sweep unrelated comments out of files you only happen to open.
 
 ### Documentation Comments
 
 Documentation on an exported identifier is a contract for callers, not an explanation of the implementation, so the default above does not apply to it. Write it when a language or task skill requires it, such as doc comments on exported Go identifiers.
 
-- Document what a caller depends on: purpose, inputs, outputs, errors, and side effects.
+- Open with one sentence stating the purpose. Add a line only for an input, output, error, or side effect the caller cannot infer from the signature.
 - Do not describe how the body works. The implementation may change; the contract should not.
+- Never fill in a template. The skill decides the syntax, not the volume: skip any section the format offers when it would restate the signature.
 - Do not document unexported identifiers for symmetry. There the default applies.
-- Follow the format the language skill requires, and keep the same length and clarity rules.
+- The delete-first rule applies here too: if a linter demands documentation for an identifier whose contract tells the reader nothing, unexport it instead of writing the comment.
+- Follow the format the language skill requires.
