@@ -52,6 +52,46 @@ func (c *Counter) Increment() { c.value++ }
 - Do not introduce new dependencies unless explicitly requested.
 - Preserve existing architecture and abstractions.
 
+## Architecture
+
+- Respect clean architecture boundaries.
+- For existing code, request confirmation before introducing or changing a design pattern.
+- Define small interfaces at the point of use.
+- Avoid `init()` unless runtime constraints require it.
+
+## Design Patterns
+
+Before choosing the Go design, invoke `design-pattern-decision` with this input contract:
+
+```text
+User request:
+Language:
+Relevant files, package, module, or component:
+Existing local conventions:
+Plan, tentative code, or current code summary:
+Abstractions being considered or already present:
+Variation points:
+Expected future cases:
+Testing impact:
+```
+
+Set `Language` to `go`.
+
+Continue based on `Recommended pattern`:
+
+- `none`: continue with this Go skill only.
+- any other pattern: use it to develop or adjust the plan, tentative code, current code, or intended change. If a matching `go-pattern-<recommended-pattern>` skill is available, invoke it and treat its result as a pattern skeleton. Otherwise, apply the pattern using general Go knowledge. Then continue in this Go skill for implementation rules, tests, formatting, and validation.
+
+Do not invoke `design-pattern-decision` again after returning from a Go pattern skill unless the plan, tentative code, or current code summary materially changes.
+
+## Concurrency
+
+- Pass `context.Context` as the first parameter for cancellable or long-running work.
+- Do not store `context.Context` in structs except for rare, clearly documented exceptions.
+- Do not accept `context.Context` in constructors unless construction itself performs cancellable work.
+- Treat cancellation, deadlines, and request-scoped metadata as caller-owned per call.
+- Avoid unbounded goroutines.
+
 ## Errors
 
 - Return explicit, contextual errors.
@@ -99,46 +139,6 @@ quoted := fmt.Sprintf("value=%q", value)
 raw := fmt.Sprintf("value=%s", value)
 ```
 
-## Architecture
-
-- Respect clean architecture boundaries.
-- For existing code, request confirmation before introducing or changing a design pattern.
-- Define small interfaces at the point of use.
-- Avoid `init()` unless runtime constraints require it.
-
-## Design Patterns
-
-Before choosing the Go design, invoke `design-pattern-decision` with this input contract:
-
-```text
-User request:
-Language:
-Relevant files, package, module, or component:
-Existing local conventions:
-Plan, tentative code, or current code summary:
-Abstractions being considered or already present:
-Variation points:
-Expected future cases:
-Testing impact:
-```
-
-Set `Language` to `go`.
-
-Continue based on `Recommended pattern`:
-
-- `none`: continue with this Go skill only.
-- any other pattern: use it to develop or adjust the plan, tentative code, current code, or intended change. If a matching `go-pattern-<recommended-pattern>` skill is available, invoke it and treat its result as a pattern skeleton. Otherwise, apply the pattern using general Go knowledge. Then continue in this Go skill for implementation rules, tests, formatting, and validation.
-
-Do not invoke `design-pattern-decision` again after returning from a Go pattern skill unless the plan, tentative code, or current code summary materially changes.
-
-## Concurrency
-
-- Pass `context.Context` as the first parameter for cancellable or long-running work.
-- Do not store `context.Context` in structs except for rare, clearly documented exceptions.
-- Do not accept `context.Context` in constructors unless construction itself performs cancellable work.
-- Treat cancellation, deadlines, and request-scoped metadata as caller-owned per call.
-- Avoid unbounded goroutines.
-
 ## Tests
 
 - Add or update tests when behavior changes.
@@ -183,18 +183,6 @@ func BenchmarkProcess(b *testing.B) {
 	}
 }
 ```
-
-## Anti-Patterns
-
-Do not introduce:
-
-- Table-driven unit test scenario loops.
-- Loop-driven subtest generation.
-- Parent and child parallel test execution.
-- Unrelated refactors.
-- New dependencies without explicit user approval.
-- Hidden or ignored errors.
-- Nonessential `init()` functions.
 
 ## Execution Contract
 
