@@ -38,14 +38,15 @@ Provide a file-by-file Go skeleton for Factory Method.
 ### `product/product.go`
 
 ```go
+// Package product defines the contract and the type identifier every product shares.
 package product
 
-// ProductType identifies a concrete product.
-type ProductType string
+// Type identifies a concrete product.
+type Type string
 
 // Product is the common contract for every concrete product.
 type Product interface {
-	GetType() ProductType
+	Type() Type
 	DoSomething() string
 }
 ```
@@ -57,24 +58,23 @@ package product
 
 import "fmt"
 
-const (
-	// <productTypeName> identifies one concrete product type.
-	<productTypeName> ProductType = "<type>"
-)
+// <productTypeName> identifies one concrete product type.
+const <productTypeName> Type = "<type>"
 
+// <productName> is one concrete product: its type is fixed and only its owner varies.
 type <productName> struct {
 	Owner string
-	Type  ProductType
 }
 
-func (p <productName>) GetType() ProductType {
+// Type is fixed per concrete product, so it never depends on how the product was built.
+func (p <productName>) Type() Type {
 	return <productTypeName>
 }
 
 func (p <productName>) DoSomething() string {
 	return fmt.Sprintf(
 		"product of type %s owned by %s is doing something",
-		p.Type,
+		<productTypeName>,
 		p.Owner,
 	)
 }
@@ -83,7 +83,8 @@ func (p <productName>) DoSomething() string {
 ### `factory/factory.go`
 
 ```go
-package factorymethod
+// Package factory picks which concrete product a caller gets.
+package factory
 
 import (
 	"fmt"
@@ -96,16 +97,14 @@ type Factory interface {
 	CreateProduct(owner string) product.Product
 }
 
-// OneTimeAction is an example of the shared operation that, in other languages,
-// might already be implemented in an abstract creator or abstract base class.
+// OneTimeAction is what an abstract base class would implement in other languages.
 func OneTimeAction(factory Factory, temporaryOwner string) string {
-	product := factory.CreateProduct(temporaryOwner)
+	created := factory.CreateProduct(temporaryOwner)
 
-	return product.DoSomething()
+	return created.DoSomething()
 }
 
-// GetFactory returns the factory for the given product type.
-func GetFactory(productType product.ProductType) (Factory, error) {
+func New(productType product.Type) (Factory, error) {
 	switch productType {
 	case product.<firstProductTypeName>:
 		return <firstFactoryName>{}, nil
@@ -120,18 +119,16 @@ func GetFactory(productType product.ProductType) (Factory, error) {
 ### `factory/factory_<type>.go`
 
 ```go
-package factorymethod
+package factory
 
 import "<module>/<pattern-root>/product"
 
 // <factoryName> creates one concrete product type.
 type <factoryName> struct{}
 
+// CreateProduct injects the caller's data into this factory's own concrete type.
 func (f <factoryName>) CreateProduct(owner string) product.Product {
-	return product.<productName>{
-		Owner: owner,
-		Type:  product.<productTypeName>,
-	}
+	return product.<productName>{Owner: owner}
 }
 ```
 
@@ -146,24 +143,24 @@ import (
 	"fmt"
 	"log"
 
-	factorymethod "<module>/<pattern-root>/factory"
+	"<module>/<pattern-root>/factory"
 	"<module>/<pattern-root>/product"
 )
 
 func printDetails(p product.Product) {
-	fmt.Printf("Type: %s\n", p.GetType())
+	fmt.Printf("Type: %s\n", p.Type())
 	fmt.Printf("Action: %s\n", p.DoSomething())
 }
 
 func main() {
 	typeOne := product.<firstProductTypeName>
-	factoryOne, err := factorymethod.GetFactory(typeOne)
+	factoryOne, err := factory.New(typeOne)
 	if err != nil {
 		log.Fatalf("get factory one: %v", err)
 	}
 
 	typeTwo := product.<secondProductTypeName>
-	factoryTwo, err := factorymethod.GetFactory(typeTwo)
+	factoryTwo, err := factory.New(typeTwo)
 	if err != nil {
 		log.Fatalf("get factory two: %v", err)
 	}
@@ -174,7 +171,7 @@ func main() {
 	printDetails(productOne)
 	printDetails(productTwo)
 
-	fmt.Println(factorymethod.OneTimeAction(factoryOne, "Carol"))
-	fmt.Println(factorymethod.OneTimeAction(factoryTwo, "Dave"))
+	fmt.Println(factory.OneTimeAction(factoryOne, "Carol"))
+	fmt.Println(factory.OneTimeAction(factoryTwo, "Dave"))
 }
 ```

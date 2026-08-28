@@ -57,7 +57,7 @@ import (
 )
 
 var assets = map[string]string{
-	"<first-id>": "first result",
+	"<first-id>":  "first result",
 	"<second-id>": "second result",
 }
 
@@ -98,6 +98,54 @@ type Cache struct {
 	stop   func()
 }
 
+// NewCache starts a cleanup goroutine, so callers must later call Stop.
+func NewCache(origin service.Library, interval time.Duration) *Cache {
+	done := make(chan struct{})
+	cache := &Cache{
+		origin: origin,
+		stored: make(map[string][]byte),
+		stop:   sync.OnceFunc(func() { close(done) }),
+	}
+
+	go cache.clean(interval, done)
+
+	return cache
+}
+
+func (c *Cache) Download(id string) ([]byte, error) {
+	c.mu.RLock()
+	if asset, ok := c.stored[id]; ok {
+		c.mu.RUnlock()
+
+		return bytes.Clone(asset), nil
+	}
+
+	c.mu.RUnlock()
+
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	// An RWMutex read lock cannot be upgraded, so another caller may have filled
+	// this entry meanwhile.
+	if asset, ok := c.stored[id]; ok {
+		return bytes.Clone(asset), nil
+	}
+
+	asset, err := c.origin.Download(id)
+	if err != nil {
+		return nil, err // A failed download is not cached.
+	}
+
+	c.stored[id] = asset
+
+	return bytes.Clone(asset), nil
+}
+
+// Stop ends the cleanup goroutine exactly once.
+func (c *Cache) Stop() {
+	c.stop()
+}
+
 func (c *Cache) clean(interval time.Duration, done <-chan struct{}) {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
@@ -112,48 +160,6 @@ func (c *Cache) clean(interval time.Duration, done <-chan struct{}) {
 			return
 		}
 	}
-}
-
-// NewCache starts a cleanup goroutine, so callers must later call Stop.
-func NewCache(origin service.Library, interval time.Duration) *Cache {
-	done := make(chan struct{})
-	cache := &Cache{
-		origin: origin,
-		stored: make(map[string][]byte),
-		stop:   sync.OnceFunc(func() { close(done) }),
-	}
-
-	go cache.clean(interval, done)
-	return cache
-}
-
-// Stop ends the cleanup goroutine exactly once.
-func (c *Cache) Stop() {
-	c.stop()
-}
-
-func (c *Cache) Download(id string) ([]byte, error) {
-	c.mu.RLock()
-	if asset, ok := c.stored[id]; ok {
-		c.mu.RUnlock()
-		return bytes.Clone(asset), nil
-	}
-	c.mu.RUnlock()
-
-	// A read lock cannot be upgraded; another caller may win before this write lock.
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	if asset, ok := c.stored[id]; ok {
-		return bytes.Clone(asset), nil
-	}
-
-	asset, err := c.origin.Download(id)
-	if err != nil {
-		return nil, err // Do not cache failures.
-	}
-
-	c.stored[id] = asset
-	return bytes.Clone(asset), nil
 }
 ```
 

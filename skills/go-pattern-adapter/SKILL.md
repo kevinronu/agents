@@ -40,6 +40,7 @@ Provide a file-by-file Go skeleton for Adapter.
 ### `target/processor.go`
 
 ```go
+// Package target defines the interface the client depends on.
 package target
 
 // PaymentProcessor is the target interface. Native backends and adapters both reach it.
@@ -51,6 +52,7 @@ type PaymentProcessor interface {
 ### `client/service.go`
 
 ```go
+// Package client holds code that works only through the target interface.
 package client
 
 import "<module>/<pattern-root>/target"
@@ -60,6 +62,7 @@ type PaymentService struct {
 	Processor target.PaymentProcessor
 }
 
+// Buy behaves the same whether the processor is native or adapted.
 func (s PaymentService) Buy(amountCents int) (string, error) {
 	return s.Processor.Pay(amountCents)
 }
@@ -68,12 +71,15 @@ func (s PaymentService) Buy(amountCents int) (string, error) {
 ### `native/service.go`
 
 ```go
+// Package native holds a backend that already satisfies the target.
 package native
 
 import "fmt"
 
+// Service already speaks the target contract, so it needs no adapter.
 type Service struct{}
 
+// Pay already matches the target signature, so nothing is translated here.
 func (Service) Pay(amountCents int) (string, error) {
 	return fmt.Sprintf("paid $%.2f via native service", float64(amountCents)/100), nil
 }
@@ -82,11 +88,13 @@ func (Service) Pay(amountCents int) (string, error) {
 ### `adaptee/<legacy-service>.go`
 
 ```go
+// Package adaptee holds existing code whose API you cannot change.
 package adaptee
 
 // <legacyServiceName> is useful existing code whose API does not match the target.
 type <legacyServiceName> struct{}
 
+// Charge's dollars-and-bool shape is the mismatch the adapter absorbs.
 func (<legacyServiceName>) Charge(dollars float64) bool {
 	return dollars > 0
 }
@@ -95,6 +103,7 @@ func (<legacyServiceName>) Charge(dollars float64) bool {
 ### `adapter/<legacy-adapter>.go`
 
 ```go
+// Package adapter translates between the adaptee and the target.
 package adapter
 
 import (

@@ -37,6 +37,7 @@ Provide a file-by-file Go skeleton for Bridge.
 ### `implementation/exporter.go`
 
 ```go
+// Package implementation holds the primitives that vary independently of the abstraction.
 package implementation
 
 // Exporter is the low-level side of the bridge: the primitives abstractions compose with.
@@ -51,6 +52,7 @@ type Exporter interface {
 ```go
 package implementation
 
+// <implementationOneName> renders the primitives in one output format.
 type <implementationOneName> struct{}
 
 func (<implementationOneName>) Heading(text string) string {
@@ -67,6 +69,7 @@ func (<implementationOneName>) Field(label, value string) string {
 ```go
 package implementation
 
+// <implementationTwoName> renders the same primitives in another output format.
 type <implementationTwoName> struct{}
 
 func (<implementationTwoName>) Heading(text string) string {
@@ -81,6 +84,7 @@ func (<implementationTwoName>) Field(label, value string) string {
 ### `abstraction/document.go`
 
 ```go
+// Package abstraction holds the documents composed from implementation primitives.
 package abstraction
 
 import "<module>/<pattern-root>/implementation"
@@ -104,6 +108,7 @@ type <refinedOneName> struct {
 	Total string
 }
 
+// Export composes this document's content and never learns the output format.
 func (d <refinedOneName>) Export() string {
 	return d.Exporter.Heading(d.Title) +
 		d.Exporter.Field("Date", d.Date) +

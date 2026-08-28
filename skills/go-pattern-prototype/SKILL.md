@@ -35,6 +35,7 @@ Provide a file-by-file Go skeleton for Prototype.
 ### `prototype/prototype.go`
 
 ```go
+// Package prototype defines the contract for values that copy themselves.
 package prototype
 
 // Prototype is anything that can copy itself.
@@ -46,6 +47,7 @@ type Prototype[T any] interface {
 ### `model/<leaf>.go`
 
 ```go
+// Package model holds the values that implement Prototype.
 package model
 
 // <leafName> is a leaf prototype with no nested mutable references.

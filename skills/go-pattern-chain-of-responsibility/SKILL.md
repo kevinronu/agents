@@ -60,11 +60,16 @@ type Successor struct {
 	next Handler
 }
 
+// SetNext returns the handler it attached rather than the receiver, so a chain
+// reads as head.SetNext(second).SetNext(third).
 func (s *Successor) SetNext(next Handler) Handler {
 	s.next = next
+
 	return next
 }
 
+// Handle treats a nil successor as a completed chain, so the last step can
+// delegate without knowing it is last.
 func (s *Successor) Handle(req Request) error {
 	if s.next == nil {
 		return nil
@@ -102,18 +107,22 @@ type Server struct {
 	middleware handler.Handler
 }
 
+// New builds a server with no middleware; attach a chain with SetMiddleware.
 func New() *Server {
 	return &Server{accounts: make(map[string]account)}
 }
 
+// SetMiddleware replaces the whole chain. Order is decided here, never inside a step.
 func (s *Server) SetMiddleware(middleware handler.Handler) {
 	s.middleware = middleware
 }
 
+// Register adds an account that the admin step will reject on admin paths.
 func (s *Server) Register(email, password string) {
 	s.accounts[email] = account{password: password}
 }
 
+// RegisterAdmin adds an account that also passes the admin step.
 func (s *Server) RegisterAdmin(email, password string) {
 	s.accounts[email] = account{password: password, admin: true}
 }
@@ -134,15 +143,21 @@ func (s *Server) Serve(req handler.Request) (string, error) {
 	return page, nil
 }
 
+// HasEmail reports only that the account exists; it does not check the password.
 func (s *Server) HasEmail(email string) bool {
 	_, ok := s.accounts[email]
+
 	return ok
 }
 
+// IsValidPassword answers for unknown accounts too, so no prior HasEmail call is needed.
 func (s *Server) IsValidPassword(email, password string) bool {
-	return s.accounts[email].password == password
+	account, ok := s.accounts[email]
+
+	return ok && account.password == password
 }
 
+// IsAdmin reports false for an unknown account instead of failing.
 func (s *Server) IsAdmin(email string) bool {
 	return s.accounts[email].admin
 }
@@ -171,10 +186,14 @@ type RateLimit struct {
 	due      time.Time
 }
 
+// NewRateLimit admits limit requests per window on average, letting a full window
+// of credit build up while the limiter is idle.
 func NewRateLimit(limit int, window time.Duration) *RateLimit {
 	return &RateLimit{interval: window / time.Duration(limit), burst: window}
 }
 
+// Handle rejects rather than waits, and advances the due time, so a chain shared
+// across goroutines needs a lock around this step.
 func (r *RateLimit) Handle(req handler.Request) error {
 	now := time.Now()
 	due := r.due
@@ -187,6 +206,7 @@ func (r *RateLimit) Handle(req handler.Request) error {
 	}
 
 	r.due = due.Add(r.interval)
+
 	return r.Successor.Handle(req)
 }
 ```
@@ -213,10 +233,13 @@ func NewAuth(server *server.Server) *Auth {
 	return &Auth{server: server}
 }
 
+// Handle stops the chain unless the credentials match, so later steps can assume
+// an established identity.
 func (a *Auth) Handle(req handler.Request) error {
 	if !a.server.HasEmail(req.Email) {
 		return errors.New("auth: no such account")
 	}
+
 	if !a.server.IsValidPassword(req.Email, req.Password) {
 		return errors.New("auth: wrong password")
 	}
@@ -248,6 +271,7 @@ func NewAdminOnly(server *server.Server) *AdminOnly {
 	return &AdminOnly{server: server}
 }
 
+// Handle guards admin paths only and defers to the successor for every other path.
 func (a *AdminOnly) Handle(req handler.Request) error {
 	if strings.HasPrefix(req.Path, "/admin") && !a.server.IsAdmin(req.Email) {
 		return errors.New("admin only: not an admin")

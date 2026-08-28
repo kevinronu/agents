@@ -66,6 +66,7 @@ type Factory struct {
 	styles map[string]*Style
 }
 
+// NewFactory starts empty; every flyweight is created on its first request.
 func NewFactory() *Factory {
 	return &Factory{styles: make(map[string]*Style)}
 }
@@ -77,22 +78,28 @@ func (f *Factory) Get(name, color, texture string) *Style {
 	f.mu.RLock()
 	if shared, ok := f.styles[key]; ok {
 		f.mu.RUnlock()
+
 		return shared
 	}
+
 	f.mu.RUnlock()
 
-	// RLock cannot be upgraded. Recheck after acquiring the write lock.
 	f.mu.Lock()
 	defer f.mu.Unlock()
+
+	// An RWMutex read lock cannot be upgraded, so another goroutine may have
+	// inserted this key meanwhile.
 	if shared, ok := f.styles[key]; ok {
 		return shared
 	}
 
 	shared := &Style{name: name, color: color, texture: texture}
 	f.styles[key] = shared
+
 	return shared
 }
 
+// Size counts distinct flyweights, not the items that share them.
 func (f *Factory) Size() int {
 	f.mu.RLock()
 	defer f.mu.RUnlock()
@@ -116,6 +123,7 @@ type Item struct {
 	Style *flyweight.Style
 }
 
+// Draw hands this item's own position to the Style it shares with other items.
 func (i Item) Draw() string {
 	return i.Style.Draw(i.X, i.Y)
 }

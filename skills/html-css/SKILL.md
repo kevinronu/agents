@@ -46,7 +46,7 @@ Report the scoped files or ownership units, any escalations, and assumptions whe
 - Use BEM naming for all new CSS classes: `block__element--modifier`.
 - When modifying existing code, migrate to BEM only within the affected scope.
 - Do not introduce ad hoc or inconsistent class names.
-- Preserve existing architecture and naming conventions when they are more specific than these rules.
+- Follow an existing naming convention only when it is consistent and at least as clear as BEM. Do not imitate an ad hoc local pattern to match nearby code.
 
 ### Scope
 

@@ -50,10 +50,12 @@ type Asset struct {
 	Bytes int64
 }
 
+// Format is the extension without its dot, which is the key codecs register under.
 func (a Asset) Format() string {
 	return strings.TrimPrefix(filepath.Ext(a.Name), ".")
 }
 
+// BaseName drops the extension so a converted asset can be renamed for its target.
 func (a Asset) BaseName() string {
 	return strings.TrimSuffix(a.Name, filepath.Ext(a.Name))
 }
@@ -100,6 +102,7 @@ type Raw struct {
 // Transcoder has no state, so the facade can keep its zero value.
 type Transcoder struct{}
 
+// Decode expands an asset into the Raw form the later stages require.
 func (Transcoder) Decode(asset Asset, codec Codec) Raw {
 	return Raw{Bytes: asset.Bytes * int64(codec.Ratio)}
 }
@@ -143,6 +146,26 @@ type Converter struct {
 	enhancer   subsystem.Enhancer
 }
 
+// Check validates both ends without starting the full workflow.
+func (Converter) Check(asset subsystem.Asset, targetFormat string) error {
+	_, err := codecsFor(asset, targetFormat)
+
+	return err
+}
+
+// Convert hides the subsystem sequence while preserving its errors.
+func (c Converter) Convert(asset subsystem.Asset, targetFormat string) (subsystem.Asset, error) {
+	pair, err := codecsFor(asset, targetFormat)
+	if err != nil {
+		return subsystem.Asset{}, err
+	}
+
+	raw := c.transcoder.Decode(asset, pair.source)
+	enhanced := c.enhancer.Process(raw)
+
+	return c.transcoder.Encode(enhanced, pair.target, asset.BaseName()), nil
+}
+
 // codecPair keeps source and target lookup shared by the public facade methods.
 type codecPair struct {
 	source subsystem.Codec
@@ -161,23 +184,6 @@ func codecsFor(asset subsystem.Asset, targetFormat string) (codecPair, error) {
 	}
 
 	return codecPair{source: source, target: target}, nil
-}
-
-// Check validates both ends without starting the full workflow.
-func (Converter) Check(asset subsystem.Asset, targetFormat string) error {
-	_, err := codecsFor(asset, targetFormat)
-	return err
-}
-
-// Convert hides the subsystem sequence while preserving its errors.
-func (c Converter) Convert(asset subsystem.Asset, targetFormat string) (subsystem.Asset, error) {
-	pair, err := codecsFor(asset, targetFormat)
-	if err != nil {
-		return subsystem.Asset{}, err
-	}
-
-	raw := c.transcoder.Decode(asset, pair.source)
-	return c.transcoder.Encode(c.enhancer.Process(raw), pair.target, asset.BaseName()), nil
 }
 ```
 

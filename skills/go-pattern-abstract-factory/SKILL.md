@@ -44,6 +44,7 @@ Provide a file-by-file Go skeleton for Abstract Factory.
 ### `product/product.go`
 
 ```go
+// Package product defines the contracts and the family identifier every family implements.
 package product
 
 // FamilyType identifies a family of related products.
@@ -51,13 +52,13 @@ type FamilyType string
 
 // ProductA is the common contract for the first product kind.
 type ProductA interface {
-	GetFamily() FamilyType
+	Family() FamilyType
 	DoA() string
 }
 
 // ProductB is the common contract for the second product kind.
 type ProductB interface {
-	GetFamily() FamilyType
+	Family() FamilyType
 	DoB() string
 }
 ```
@@ -65,6 +66,7 @@ type ProductB interface {
 ### `product/<family>/family.go`
 
 ```go
+// Package <familyPackage> holds one complete family of products that belong together.
 package <familyPackage>
 
 import "<module>/<pattern-root>/product"
@@ -82,7 +84,8 @@ import "<module>/<pattern-root>/product"
 
 type <productAName> struct{}
 
-func (p <productAName>) GetFamily() product.FamilyType {
+// Family identifies the family that callers must not mix this product out of.
+func (p <productAName>) Family() product.FamilyType {
 	return <familyName>
 }
 
@@ -100,7 +103,8 @@ import "<module>/<pattern-root>/product"
 
 type <productBName> struct{}
 
-func (p <productBName>) GetFamily() product.FamilyType {
+// Family identifies the family that callers must not mix this product out of.
+func (p <productBName>) Family() product.FamilyType {
 	return <familyName>
 }
 
@@ -112,7 +116,8 @@ func (p <productBName>) DoB() string {
 ### `factory/factory.go`
 
 ```go
-package abstractfactory
+// Package factory picks the family a caller gets, so callers never name a concrete product.
+package factory
 
 import (
 	"fmt"
@@ -128,8 +133,7 @@ type Factory interface {
 	CreateProductB() product.ProductB
 }
 
-// OneTimeAction is an example of the shared operation that, in other languages,
-// might already be implemented in an abstract factory or abstract base class.
+// OneTimeAction is what an abstract base class would implement in other languages.
 func OneTimeAction(factory Factory) string {
 	productA := factory.CreateProductA()
 	productB := factory.CreateProductB()
@@ -137,8 +141,7 @@ func OneTimeAction(factory Factory) string {
 	return fmt.Sprintf("%s. %s", productA.DoA(), productB.DoB())
 }
 
-// GetFactory returns the factory for the given family.
-func GetFactory(family product.FamilyType) (Factory, error) {
+func New(family product.FamilyType) (Factory, error) {
 	switch family {
 	case <firstFamilyPackage>.<firstFamilyName>:
 		return <firstFactoryName>{}, nil
@@ -153,7 +156,7 @@ func GetFactory(family product.FamilyType) (Factory, error) {
 ### `factory/factory_<family>.go`
 
 ```go
-package abstractfactory
+package factory
 
 import (
 	"<module>/<pattern-root>/product"
@@ -163,6 +166,7 @@ import (
 // <factoryName> creates products of one concrete family.
 type <factoryName> struct{}
 
+// CreateProductA and CreateProductB always return products of the same family.
 func (f <factoryName>) CreateProductA() product.ProductA {
 	return <familyPackage>.<productAName>{}
 }
@@ -183,31 +187,31 @@ import (
 	"fmt"
 	"log"
 
-	abstractfactory "<module>/<pattern-root>/factory"
+	"<module>/<pattern-root>/factory"
 	"<module>/<pattern-root>/product"
 	<firstFamilyPackage> "<module>/<pattern-root>/product/<family-one>"
 	<secondFamilyPackage> "<module>/<pattern-root>/product/<family-two>"
 )
 
 func printProductADetails(p product.ProductA) {
-	fmt.Printf("Family: %s\n", p.GetFamily())
+	fmt.Printf("Family: %s\n", p.Family())
 	fmt.Printf("Action: %s\n", p.DoA())
 }
 
 func printProductBDetails(p product.ProductB) {
-	fmt.Printf("Family: %s\n", p.GetFamily())
+	fmt.Printf("Family: %s\n", p.Family())
 	fmt.Printf("Action: %s\n", p.DoB())
 }
 
 func main() {
 	familyOneID := <firstFamilyPackage>.<firstFamilyName>
-	factoryOne, err := abstractfactory.GetFactory(familyOneID)
+	factoryOne, err := factory.New(familyOneID)
 	if err != nil {
 		log.Fatalf("get factory one: %v", err)
 	}
 
 	familyTwoID := <secondFamilyPackage>.<secondFamilyName>
-	factoryTwo, err := abstractfactory.GetFactory(familyTwoID)
+	factoryTwo, err := factory.New(familyTwoID)
 	if err != nil {
 		log.Fatalf("get factory two: %v", err)
 	}
@@ -224,7 +228,7 @@ func main() {
 	printProductADetails(productAFromTwo)
 	printProductBDetails(productBFromTwo)
 
-	fmt.Println(abstractfactory.OneTimeAction(factoryOne))
-	fmt.Println(abstractfactory.OneTimeAction(factoryTwo))
+	fmt.Println(factory.OneTimeAction(factoryOne))
+	fmt.Println(factory.OneTimeAction(factoryTwo))
 }
 ```

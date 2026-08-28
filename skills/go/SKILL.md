@@ -60,7 +60,25 @@ func (c *Counter) Increment() { c.value++ }
 
 ## Exported Identifiers
 
-- Add documentation comments for every exported identifier.
+- Document an exported identifier when its contract is not already clear from its name and signature. Leave it undocumented when a comment could only repeat them.
+- Start the comment with the identifier name so `go doc` reads correctly.
+- Add a package comment when the package boundary is not obvious from its name.
+- Never change the code to avoid writing a comment. Exporting, naming, and structure answer to the design, not to a linter.
+
+When a linter demands a comment the code does not need, work down this list and stop at the first entry that yields a true sentence.
+
+1. What can bite the caller: panics, zero-value behavior, nil results, concurrency safety, aliasing, cost. `strings.Builder.Grow` documents `If n is negative, Grow panics`.
+2. The specification that defines the behavior, when the authority is outside this code. `base64.StdEncoding` documents `as defined in RFC 4648`.
+3. When to reach for it and when not to. `sync.Map` documents `Most code should use a plain Go map instead`.
+4. An equivalence in terms the reader already knows. `strings.Builder.Len` documents `b.Len() == len(b.String())`.
+5. The shortest true sentence, when nothing above applies. `strings.Builder.String` documents `String returns the accumulated string`.
+
+## Accessors
+
+- Do not prefix a function or method name with `Get`. Start with the noun instead, such as `Counts` over `GetCounts`.
+- Use a verb such as `Fetch` or `Compute` when the call is expensive, blocks, or can fail, so the cost is visible at the call site.
+- Name a mutator `SetX`. The asymmetry with the `X` accessor is intentional in Go.
+- Name the accessor for a process-wide shared value after what it returns, such as `Shared` or `Default`. Prefer an exported variable when the value needs no lazy or fallible setup.
 
 ## Packages
 

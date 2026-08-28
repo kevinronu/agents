@@ -55,15 +55,18 @@ type DataSource interface {
 // Package concrete holds the concrete component that decorators wrap.
 package concrete
 
+// Store is the concrete component: it keeps the bytes it is given, unchanged.
 type Store struct {
 	data []byte
 }
 
 func (s *Store) Write(data []byte) error {
 	s.data = data
+
 	return nil
 }
 
+// Read returns the stored slice itself; callers must not mutate what they receive.
 func (s *Store) Read() ([]byte, error) {
 	return s.data, nil
 }
@@ -84,6 +87,7 @@ import (
 	"<module>/<pattern-root>/component"
 )
 
+// <decoratorOneName> compresses on the way in and expands on the way out.
 type <decoratorOneName> struct {
 	wrappee component.DataSource
 	level   int
@@ -92,22 +96,6 @@ type <decoratorOneName> struct {
 // New<decoratorOneName> only stores the level; the codec validates it on Write.
 func New<decoratorOneName>(wrappee component.DataSource, level int) <decoratorOneName> {
 	return <decoratorOneName>{wrappee: wrappee, level: level}
-}
-
-func compress(data []byte, level int) ([]byte, error) {
-	var buf bytes.Buffer
-	writer, err := gzip.NewWriterLevel(&buf, level)
-	if err != nil {
-		return nil, fmt.Errorf("open gzip writer: %w", err)
-	}
-	if _, err := writer.Write(data); err != nil {
-		return nil, fmt.Errorf("write gzip: %w", err)
-	}
-	if err := writer.Close(); err != nil { // Close writes the gzip footer.
-		return nil, fmt.Errorf("close gzip writer: %w", err)
-	}
-
-	return buf.Bytes(), nil
 }
 
 func (d <decoratorOneName>) Write(data []byte) error {
@@ -119,22 +107,7 @@ func (d <decoratorOneName>) Write(data []byte) error {
 	return d.wrappee.Write(transformed)
 }
 
-func decompress(data []byte) ([]byte, error) {
-	reader, err := gzip.NewReader(bytes.NewReader(data))
-	if err != nil {
-		return nil, fmt.Errorf("open gzip reader: %w", err)
-	}
-	plain, err := io.ReadAll(reader)
-	if err != nil {
-		return nil, fmt.Errorf("read gzip: %w", err)
-	}
-	if err := reader.Close(); err != nil {
-		return nil, fmt.Errorf("close gzip reader: %w", err)
-	}
-
-	return plain, nil
-}
-
+// Read fails when the wrapped source holds data this decorator did not write.
 func (d <decoratorOneName>) Read() ([]byte, error) {
 	data, err := d.wrappee.Read()
 	if err != nil {
@@ -142,6 +115,43 @@ func (d <decoratorOneName>) Read() ([]byte, error) {
 	}
 
 	return decompress(data)
+}
+
+func compress(data []byte, level int) ([]byte, error) {
+	var buf bytes.Buffer
+
+	writer, err := gzip.NewWriterLevel(&buf, level)
+	if err != nil {
+		return nil, fmt.Errorf("open gzip writer: %w", err)
+	}
+
+	if _, err := writer.Write(data); err != nil {
+		return nil, fmt.Errorf("write gzip: %w", err)
+	}
+
+	if err := writer.Close(); err != nil { // Close writes the gzip footer.
+		return nil, fmt.Errorf("close gzip writer: %w", err)
+	}
+
+	return buf.Bytes(), nil
+}
+
+func decompress(data []byte) ([]byte, error) {
+	reader, err := gzip.NewReader(bytes.NewReader(data))
+	if err != nil {
+		return nil, fmt.Errorf("open gzip reader: %w", err)
+	}
+
+	plain, err := io.ReadAll(reader)
+	if err != nil {
+		return nil, fmt.Errorf("read gzip: %w", err)
+	}
+
+	if err := reader.Close(); err != nil {
+		return nil, fmt.Errorf("close gzip reader: %w", err)
+	}
+
+	return plain, nil
 }
 ```
 
@@ -154,21 +164,25 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"errors"
 	"fmt"
 
 	"<module>/<pattern-root>/component"
 )
 
+// <decoratorTwoName> keeps the derived AEAD instead of the key it came from.
 type <decoratorTwoName> struct {
 	wrappee component.DataSource
 	aead    cipher.AEAD
 }
 
+// New<decoratorTwoName> fails immediately when the key cannot produce a cipher.
 func New<decoratorTwoName>(wrappee component.DataSource, key []byte) (<decoratorTwoName>, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return <decoratorTwoName>{}, fmt.Errorf("new cipher: %w", err)
 	}
+
 	aead, err := cipher.NewGCM(block)
 	if err != nil {
 		return <decoratorTwoName>{}, fmt.Errorf("new GCM: %w", err)
@@ -177,6 +191,7 @@ func New<decoratorTwoName>(wrappee component.DataSource, key []byte) (<decorator
 	return <decoratorTwoName>{wrappee: wrappee, aead: aead}, nil
 }
 
+// Write prepends a fresh nonce to the ciphertext so Read can recover it.
 func (d <decoratorTwoName>) Write(data []byte) error {
 	nonce := make([]byte, d.aead.NonceSize())
 	if _, err := rand.Read(nonce); err != nil {
@@ -186,16 +201,20 @@ func (d <decoratorTwoName>) Write(data []byte) error {
 	return d.wrappee.Write(d.aead.Seal(nonce, nonce, data, nil))
 }
 
+// Read fails when the data is too short to carry a nonce or when authentication
+// does not match, which also detects tampering.
 func (d <decoratorTwoName>) Read() ([]byte, error) {
 	data, err := d.wrappee.Read()
 	if err != nil {
 		return nil, err
 	}
+
 	if len(data) < d.aead.NonceSize() {
-		return nil, fmt.Errorf("stored data is shorter than the nonce")
+		return nil, errors.New("stored data is shorter than the nonce")
 	}
 
 	nonce, ciphertext := data[:d.aead.NonceSize()], data[d.aead.NonceSize():]
+
 	plain, err := d.aead.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
 		return nil, fmt.Errorf("open ciphertext: %w", err)

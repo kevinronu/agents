@@ -13,8 +13,8 @@ Provide a file-by-file Go skeleton for Builder.
 
 - Keep the shared `Builder` interface, selector type, and shared validation helper together in `builder/builder.go`. This gives callers and concrete builders one common contract without scattering the construction rules.
 - Make chainable step methods return the shared `Builder` interface so concrete builders stay interchangeable at call sites.
-- Use pointer receivers for concrete builders so they can accumulate state across steps and reset themselves after `Build`.
-- Let `Build` validate required parts, return the shared `product.Product`, and then clear internal state for reuse.
+- Use pointer receivers for concrete builders so they can accumulate state across steps.
+- Let `Build` validate required parts and return the shared `product.Product`. Keep clearing accumulated state in `Reset`, called by whoever starts the next product, so `Build` does not silently discard the state a caller may still read.
 - Keep `Director` as an optional layer for fixed recipes. It is useful when multiple construction sequences should stay reusable, but callers can still drive the builder directly when no recipe abstraction is needed.
 - If one part depends on another, keep that dependency creation in the recipe or caller, not hidden inside unrelated builder steps.
 - If an optional part depends on a required one, a small constructor helper can make that dependency explicit before the part enters the builder chain.
@@ -49,6 +49,7 @@ Provide a file-by-file Go skeleton for Builder.
 ### `product/product.go`
 
 ```go
+// Package product defines what every builder produces.
 package product
 
 // Product is what a builder produces.
@@ -60,6 +61,7 @@ type Product interface {
 ### `part/part_<required-one>/part_<required-one>.go`
 
 ```go
+// Package <requiredOnePackage> holds one part every product variant requires.
 package <requiredOnePackage>
 
 type <requiredOneName> struct {
@@ -70,6 +72,7 @@ type <requiredOneName> struct {
 ### `part/part_<required-two>/part_<required-two>.go`
 
 ```go
+// Package <requiredTwoPackage> holds the second required part.
 package <requiredTwoPackage>
 
 type <requiredTwoName> struct {
@@ -80,6 +83,7 @@ type <requiredTwoName> struct {
 ### `part/part_<optional>/part_<optional>.go`
 
 ```go
+// Package <optionalPartPackage> holds the part a caller may leave out.
 package <optionalPartPackage>
 
 import <requiredOnePackage> "<module>/<pattern-root>/part/part_<required-one>"
@@ -89,10 +93,12 @@ type <optionalPartName> struct {
 	related *<requiredOnePackage>.<requiredOneName>
 }
 
+// New<optionalPartName> makes the dependency on another part explicit at construction.
 func New<optionalPartName>(related *<requiredOnePackage>.<requiredOneName>) *<optionalPartName> {
 	return &<optionalPartName>{related: related}
 }
 
+// Describe reports whether the dependency was supplied at construction.
 func (p *<optionalPartName>) Describe() string {
 	if p.related == nil {
 		return "<optional-part> not configured"
@@ -105,14 +111,16 @@ func (p *<optionalPartName>) Describe() string {
 ### `builder/builder.go`
 
 ```go
+// Package builder assembles products step by step and picks which builder runs.
 package builder
 
 import (
+	"errors"
 	"fmt"
 
+	<optionalPartPackage> "<module>/<pattern-root>/part/part_<optional>"
 	<requiredOnePackage> "<module>/<pattern-root>/part/part_<required-one>"
 	<requiredTwoPackage> "<module>/<pattern-root>/part/part_<required-two>"
-	<optionalPartPackage> "<module>/<pattern-root>/part/part_<optional>"
 	"<module>/<pattern-root>/product"
 )
 
@@ -125,16 +133,16 @@ type Builder interface {
 	Build() (product.Product, error)
 }
 
-// BuilderType selects a concrete builder.
-type BuilderType string
+// Type selects a concrete builder.
+type Type string
 
+// One constant per concrete builder, so callers pick a variant without naming its type.
 const (
-	<firstBuilderTypeName> BuilderType = "<variant-one>"
-	<secondBuilderTypeName> BuilderType = "<variant-two>"
+	<firstBuilderTypeName>  Type = "<variant-one>"
+	<secondBuilderTypeName> Type = "<variant-two>"
 )
 
-// GetBuilder returns the concrete builder for the given type.
-func GetBuilder(builderType BuilderType) (Builder, error) {
+func New(builderType Type) (Builder, error) {
 	switch builderType {
 	case <firstBuilderTypeName>:
 		return &<firstBuilderName>{}, nil
@@ -145,17 +153,16 @@ func GetBuilder(builderType BuilderType) (Builder, error) {
 	}
 }
 
-// ValidateParts checks that every required part is set.
-func ValidateParts(
+func validateParts(
 	partOne *<requiredOnePackage>.<requiredOneName>,
 	partTwo *<requiredTwoPackage>.<requiredTwoName>,
 ) error {
 	if partOne == nil {
-		return fmt.Errorf("missing required part: <required-one>")
+		return errors.New("missing required part: <required-one>")
 	}
 
 	if partTwo == nil {
-		return fmt.Errorf("missing required part: <required-two>")
+		return errors.New("missing required part: <required-two>")
 	}
 
 	return nil
@@ -168,9 +175,9 @@ func ValidateParts(
 package builder
 
 import (
+	<optionalPartPackage> "<module>/<pattern-root>/part/part_<optional>"
 	<requiredOnePackage> "<module>/<pattern-root>/part/part_<required-one>"
 	<requiredTwoPackage> "<module>/<pattern-root>/part/part_<required-two>"
-	<optionalPartPackage> "<module>/<pattern-root>/part/part_<optional>"
 	"<module>/<pattern-root>/product"
 	<productPackage> "<module>/<pattern-root>/product/product_<variant>"
 )
@@ -182,12 +189,14 @@ type <builderName> struct {
 	partOpt *<optionalPartPackage>.<optionalPartName>
 }
 
+// Reset returns the builder itself, so a recipe can chain the first step onto it.
 func (b *<builderName>) Reset() Builder {
 	*b = <builderName>{}
 
 	return b
 }
 
+// Set<requiredOneName> stores a copy, so later edits by the caller do not reach the product.
 func (b *<builderName>) Set<requiredOneName>(part <requiredOnePackage>.<requiredOneName>) Builder {
 	b.partOne = &part
 
@@ -200,26 +209,24 @@ func (b *<builderName>) Set<requiredTwoName>(part <requiredTwoPackage>.<required
 	return b
 }
 
+// Set<optionalPartName> may be skipped entirely; Build succeeds without it.
 func (b *<builderName>) Set<optionalPartName>(part <optionalPartPackage>.<optionalPartName>) Builder {
 	b.partOpt = &part
 
 	return b
 }
 
+// Build reports the first missing required part and leaves accumulated state intact.
 func (b *<builderName>) Build() (product.Product, error) {
-	if err := ValidateParts(b.partOne, b.partTwo); err != nil {
+	if err := validateParts(b.partOne, b.partTwo); err != nil {
 		return nil, err
 	}
 
-	result := <productPackage>.<productName>{
-		<requiredOneFieldName>: b.partOne,
-		<requiredTwoFieldName>: b.partTwo,
+	return <productPackage>.<productName>{
+		<requiredOneFieldName>:  b.partOne,
+		<requiredTwoFieldName>:  b.partTwo,
 		<optionalPartFieldName>: b.partOpt,
-	}
-
-	b.Reset()
-
-	return result, nil
+	}, nil
 }
 ```
 
@@ -231,9 +238,9 @@ Use one file like the template above per concrete builder and product variant, r
 package builder
 
 import (
+	<optionalPartPackage> "<module>/<pattern-root>/part/part_<optional>"
 	<requiredOnePackage> "<module>/<pattern-root>/part/part_<required-one>"
 	<requiredTwoPackage> "<module>/<pattern-root>/part/part_<required-two>"
-	<optionalPartPackage> "<module>/<pattern-root>/part/part_<optional>"
 	"<module>/<pattern-root>/product"
 )
 
@@ -242,14 +249,17 @@ type Director struct {
 	builder Builder
 }
 
+// NewDirector binds the recipes to one builder; SetBuilder swaps it later.
 func NewDirector(builder Builder) *Director {
 	return &Director{builder: builder}
 }
 
+// SetBuilder points the same recipes at another builder.
 func (d *Director) SetBuilder(builder Builder) {
 	d.builder = builder
 }
 
+// BuildVariantOne resets first, so the recipe never inherits an earlier product's parts.
 func (d *Director) BuildVariantOne() (product.Product, error) {
 	partOne := <requiredOnePackage>.<requiredOneName>{Value: "default"}
 
@@ -262,6 +272,7 @@ func (d *Director) BuildVariantOne() (product.Product, error) {
 	return d.builder.Build()
 }
 
+// BuildVariantTwo leaves the optional part unset, which Build accepts.
 func (d *Director) BuildVariantTwo() (product.Product, error) {
 	d.builder.
 		Reset().
@@ -277,31 +288,31 @@ Keep `Director` only when reusable recipes are part of the problem. If callers a
 ### `product/product_<variant>/product_<variant>.go`
 
 ```go
+// Package <productPackage> holds one assembled product variant.
 package <productPackage>
 
 import (
-	"strings"
-
+	<optionalPartPackage> "<module>/<pattern-root>/part/part_<optional>"
 	<requiredOnePackage> "<module>/<pattern-root>/part/part_<required-one>"
 	<requiredTwoPackage> "<module>/<pattern-root>/part/part_<required-two>"
-	<optionalPartPackage> "<module>/<pattern-root>/part/part_<optional>"
 	"<module>/<pattern-root>/product"
 )
 
+// <productName> is one assembled variant; only a builder should construct it.
 type <productName> struct {
-	<requiredOneFieldName> *<requiredOnePackage>.<requiredOneName>
-	<requiredTwoFieldName> *<requiredTwoPackage>.<requiredTwoName>
+	<requiredOneFieldName>  *<requiredOnePackage>.<requiredOneName>
+	<requiredTwoFieldName>  *<requiredTwoPackage>.<requiredTwoName>
 	<optionalPartFieldName> *<optionalPartPackage>.<optionalPartName>
 }
 
 var _ product.Product = <productName>{}
 
 func (p <productName>) Describe() string {
-	var b strings.Builder
+	if p.<optionalPartFieldName> == nil {
+		return "<product-name> assembled"
+	}
 
-	b.WriteString("<product-name> assembled")
-
-	return b.String()
+	return "<product-name> assembled with " + p.<optionalPartFieldName>.Describe()
 }
 ```
 
@@ -320,12 +331,12 @@ import (
 )
 
 func main() {
-	builderOne, err := builder.GetBuilder(builder.<firstBuilderTypeName>)
+	builderOne, err := builder.New(builder.<firstBuilderTypeName>)
 	if err != nil {
 		log.Fatalf("get builder one: %v", err)
 	}
 
-	builderTwo, err := builder.GetBuilder(builder.<secondBuilderTypeName>)
+	builderTwo, err := builder.New(builder.<secondBuilderTypeName>)
 	if err != nil {
 		log.Fatalf("get builder two: %v", err)
 	}

@@ -12,7 +12,7 @@ Provide a file-by-file Go skeleton for Singleton.
 ## Non-Obvious Go Notes
 
 - Keep the shared holder and the exported accessor in the same small package so callers cannot construct competing instances accidentally.
-- Return the shared instance through an accessor like `GetInstance(...)` instead of exposing a package variable directly. This keeps lazy initialization, locking, and setup errors behind one stable entry point.
+- Return the shared instance through an accessor like `Default(...)` instead of exposing a package variable directly. This keeps lazy initialization, locking, and setup errors behind one stable entry point.
 - Use a pointer return when callers must share one identity.
 - If one-time setup can fail or depends on `context.Context`, prefer an explicit locking flow over `sync.Once`, so the accessor can return an error and retry later if initialization did not complete.
 - Use a fast path for already-created reads and a guarded slow path for first creation when concurrent access matters.
@@ -33,6 +33,7 @@ Provide a file-by-file Go skeleton for Singleton.
 ### `singleton/instance.go`
 
 ```go
+// Package singleton owns the one shared value and the accessor that builds it.
 package singleton
 
 import "fmt"
@@ -42,7 +43,6 @@ type Instance struct {
 	name string
 }
 
-// Describe reports the shared instance identity.
 func (i Instance) Describe() string {
 	return fmt.Sprintf("instance %q", i.name)
 }
@@ -59,34 +59,32 @@ import (
 	"sync"
 )
 
-// instanceSingleton holds the lazily-created Instance behind a lock.
-type instanceSingleton struct {
+// lazyInstance holds the lazily-created Instance behind a lock.
+type lazyInstance struct {
 	instance *Instance
 	mu       sync.RWMutex
 }
 
-// shared is the package-level holder for the singleton instance.
-var shared instanceSingleton
+var defaultInstance lazyInstance
 
-// GetInstance returns the shared Instance, creating it on first use.
-func GetInstance(ctx context.Context) (*Instance, error) {
-	// Fast path: return the instance if it already exists.
-	shared.mu.RLock()
-	if shared.instance != nil {
-		shared.mu.RUnlock()
+// Default builds the one process-wide Instance on first use and is safe for concurrent use.
+func Default(ctx context.Context) (*Instance, error) {
+	defaultInstance.mu.RLock()
+	if defaultInstance.instance != nil {
+		defaultInstance.mu.RUnlock()
 
-		return shared.instance, nil
+		return defaultInstance.instance, nil
 	}
 
-	shared.mu.RUnlock()
+	defaultInstance.mu.RUnlock()
 
-	// Slow path: take the write lock to create it.
-	shared.mu.Lock()
-	defer shared.mu.Unlock()
+	defaultInstance.mu.Lock()
+	defer defaultInstance.mu.Unlock()
 
-	// Re-check after the write lock in case another goroutine created it.
-	if shared.instance != nil {
-		return shared.instance, nil
+	// A write lock cannot be acquired atomically after a read lock, so another
+	// goroutine may have created the instance meanwhile.
+	if defaultInstance.instance != nil {
+		return defaultInstance.instance, nil
 	}
 
 	created, err := buildInstance(ctx)
@@ -94,12 +92,11 @@ func GetInstance(ctx context.Context) (*Instance, error) {
 		return nil, fmt.Errorf("building instance: %w", err)
 	}
 
-	shared.instance = created
+	defaultInstance.instance = created
 
-	return shared.instance, nil
+	return defaultInstance.instance, nil
 }
 
-// buildInstance performs the one-time setup that may fail.
 func buildInstance(ctx context.Context) (*Instance, error) {
 	if err := ctx.Err(); err != nil {
 		return nil, err
@@ -127,14 +124,14 @@ import (
 func main() {
 	ctx := context.Background()
 
-	first, err := singleton.GetInstance(ctx)
+	first, err := singleton.Default(ctx)
 	if err != nil {
-		log.Fatalf("get instance: %v", err)
+		log.Fatalf("default instance: %v", err)
 	}
 
-	second, err := singleton.GetInstance(ctx)
+	second, err := singleton.Default(ctx)
 	if err != nil {
-		log.Fatalf("get instance: %v", err)
+		log.Fatalf("default instance: %v", err)
 	}
 
 	fmt.Println(first.Describe())

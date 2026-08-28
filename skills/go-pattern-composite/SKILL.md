@@ -42,6 +42,7 @@ package component
 
 // Component lets clients handle one item and a whole subtree uniformly.
 type Component interface {
+	// Name is the path segment Find matches against.
 	Name() string
 	Size() int64
 	Find(path string) (Component, bool)
@@ -82,6 +83,7 @@ func (c *<containerName>) Remove(name string) error {
 	for i, child := range c.children {
 		if child.Name() == name {
 			c.children = slices.Delete(c.children, i, i+1)
+
 			return nil
 		}
 	}
@@ -89,8 +91,10 @@ func (c *<containerName>) Remove(name string) error {
 	return fmt.Errorf("%s has no child named %q", c.Title, name)
 }
 
+// Size walks the whole subtree, so its cost grows with the number of descendants.
 func (c *<containerName>) Size() int64 {
 	var total int64
+
 	for _, child := range c.children {
 		total += child.Size()
 	}
@@ -104,6 +108,7 @@ func (c *<containerName>) Find(path string) (component.Component, bool) {
 	if head != c.Title {
 		return nil, false
 	}
+
 	if tail == "" {
 		return c, true
 	}
@@ -135,10 +140,12 @@ func (l <leafOneName>) Name() string {
 	return l.Title
 }
 
+// Size is the leaf's own stored size; a leaf has no children to add.
 func (l <leafOneName>) Size() int64 {
 	return l.Bytes
 }
 
+// Find matches this leaf alone: a leaf never consumes more than one segment.
 func (l <leafOneName>) Find(path string) (component.Component, bool) {
 	if path != l.Title {
 		return nil, false
@@ -165,10 +172,12 @@ func (l <leafTwoName>) Name() string {
 	return l.Title
 }
 
+// Size is computed from the target instead of stored.
 func (l <leafTwoName>) Size() int64 {
 	return int64(len(l.Target))
 }
 
+// Find matches this leaf alone: it does not follow the path it points at.
 func (l <leafTwoName>) Find(path string) (component.Component, bool) {
 	if path != l.Title {
 		return nil, false
