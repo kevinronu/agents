@@ -9,12 +9,8 @@ description: "Go Bridge skeleton and implementation notes. Use when the classifi
 
 Provide a file-by-file Go skeleton for Bridge.
 
-## Non-Obvious Go Notes
+## Use
 
-- Keep the implementation interface in its own package so refined abstractions depend on one shared low-level contract instead of concrete renderers or backends.
-- Use embedding or composition in the abstraction side to hold the implementation. This is the Go substitute for carrying shared implementation state through an abstract base type.
-- Bridge fits when both sides vary independently. If only one side varies, a simpler pattern is usually enough.
-- Keep implementation methods small and composable so refined abstractions can assemble different outputs without learning format-specific details.
-- Refined abstractions should differ mainly in the content or workflow they compose, not in how they talk to the implementation.
-
-Read [the folder shape and file-by-file skeleton](references/skeleton.md) when implementing, scaffolding, or inspecting this pattern.
+Read [the implementation notes and skeleton](references/skeleton.md) before
+implementing, scaffolding, or evaluating this pattern. Adapt it to the task;
+do not copy structure that the task does not need.
