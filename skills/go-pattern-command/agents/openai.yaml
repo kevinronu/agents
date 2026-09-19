@@ -1,0 +1,7 @@
+interface:
+  display_name: "Go Command"
+  short_description: "Go Command pattern skeleton"
+  default_prompt: "Use $go-pattern-command to load a lightweight Go Command pattern skeleton."
+
+policy:
+  allow_implicit_invocation: false
