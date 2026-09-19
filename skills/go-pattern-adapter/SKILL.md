@@ -1,6 +1,6 @@
 ---
 name: go-pattern-adapter
-description: "Lightweight Go Adapter file-by-file pattern skeleton. Use primarily when the active `go` skill calls `design-pattern-decision`, receives `Recommended pattern: adapter`, and then loads this skill; also use when the user explicitly asks to implement, scaffold, or inspect Adapter in Go. Contains only the folder shape, file-by-file code skeleton, and the few non-obvious Go adaptations worth preserving."
+description: "Go Adapter skeleton and implementation notes. Use when the classifier recommends adapter or the user asks to implement, scaffold, or inspect this pattern in Go."
 ---
 
 # Go Pattern Skeleton: Adapter

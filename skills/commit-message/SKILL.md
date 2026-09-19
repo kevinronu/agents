@@ -1,6 +1,6 @@
 ---
 name: commit-message
-description: Enforce strict guardrails for generating high-quality commit messages. Use when Codex is asked to create, draft, suggest, validate, or rewrite a commit message, especially from staged git changes and the current branch ticket.
+description: "Generate, review, or rewrite commit messages from staged changes and the current branch ticket."
 ---
 
 # Commit Message
@@ -40,21 +40,18 @@ Omit the final blank line and ticket line when no ticket is detected.
 
 - Use one of the allowed types: `Feat`, `Fix`, `Refactor`, `Docs`, `Test`, or `Chore`.
 - Use optional scope only when it is clear and useful.
-- Keep the title between 20 and 80 characters.
+- Keep the title between 20 and 79 characters.
 - Use imperative mood, such as `Fix`, not `Fixed`.
 - Capitalize the title.
-- Do not include the ticket in the title.
 - Do not end the title with a period.
 
 ## Body Rules
 
-- Include both `What:` and `Why:` lines.
 - Write the message in English.
 - Keep every line under 80 characters.
 - Use concise, specific wording based on the staged diff.
 - Preserve exact spacing: one blank line after the title and one blank line before the ticket when a ticket exists.
 - Do not add extra blank lines.
-- Do not output commentary, alternatives, markdown fences, or explanations unless the user explicitly asks for them.
 
 ## Ticket Rules
 
@@ -79,28 +76,12 @@ When multiple mappings appear possible, choose the type that reflects the domina
 
 ## Validation Checklist
 
-Before returning, verify:
-
-- The message follows the required template exactly.
-- The title is 20 to 80 characters.
-- The title uses imperative mood and no ticket.
-- `What:` and `Why:` are present.
-- Every line is under 80 characters.
-- The ticket, when present, was extracted from the branch and uppercased.
-- No placeholder ticket or fabricated rationale is present.
-- The output is a single commit message.
+Verify the message against the template, title, body, ticket, and type rules above.
 
 If any check fails, rewrite and re-validate before returning.
 
 ## Execution Contract
 
-A commit message task is complete only when all steps succeed in this order:
+Complete the required inspection, generate the message, and pass the validation checklist before returning.
 
-1. Inspect staged files, staged diff, and current branch.
-2. Derive intent from staged changes.
-3. Use relevant chat context only when it clarifies staged changes.
-4. Extract and normalize the ticket from the branch when available.
-5. Generate one message with the required template and type mapping.
-6. Validate structure, spacing, title, body, line length, and ticket rules.
-
-Return only the commit message unless the user explicitly asks for analysis or multiple options.
+Return only one plain-text commit message unless the user explicitly asks for analysis or multiple options.

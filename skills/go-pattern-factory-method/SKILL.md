@@ -1,6 +1,6 @@
 ---
 name: go-pattern-factory-method
-description: "Lightweight Go Factory Method file-by-file pattern skeleton. Use primarily when the active `go` skill calls `design-pattern-decision`, receives `Recommended pattern: factory-method`, and then loads this skill; also use when the user explicitly asks to implement, scaffold, or inspect Factory Method in Go. Contains only the folder shape, file-by-file code skeleton, and the few non-obvious Go adaptations worth preserving."
+description: "Go Factory Method skeleton and implementation notes. Use when the classifier recommends factory-method or the user asks to implement, scaffold, or inspect this pattern in Go."
 ---
 
 # Go Pattern Skeleton: Factory Method

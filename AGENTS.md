@@ -34,7 +34,9 @@ Account for renamed and deleted files. With no diff, use the requested files or 
 
 Edit only files needed for the task and format only edited files. Validation may include dependent units required by the relevant skill; that does not make those units editing or formatting targets.
 
-If any step fails, fix the issue and rerun the sequence from the appropriate failed step until scoped validation succeeds or a blocker is clearly reported.
+Run required skill and project checks. Use the smallest available check that covers the derived scope. Repository-wide checks are appropriate when required by the project, needed to cover that scope, or explicitly requested.
+
+For review or validation-only requests, report findings without editing source files; use formatter check mode when checking formatting. For implementation or correction requests, fix failures caused by the changes and rerun from the appropriate failed step until scoped validation succeeds or a blocker is clearly reported. Report unrelated failures.
 
 ---
 

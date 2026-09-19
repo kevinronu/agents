@@ -1,13 +1,13 @@
 ---
 name: go
-description: Enforce strict guardrails for implementing and validating Go code changes. Use when Codex writes, modifies, reviews, tests, formats, scopes, or statically analyzes Go code, including deriving the affected Go package scope from changed files before running quality commands and orchestrating design-pattern classification when Go code may need pattern-level structure.
+description: "Implement, review, format, test, or lint Go code with package-scoped checks."
 ---
 
 # Go
 
 ## Purpose
 
-Act as a Go implementation guard. Apply these rules before and during every Go code change, then validate only the derived change scope unless escalation rules require a broader scope.
+Apply these rules when implementing or reviewing Go code. Derive validation scope before running checks.
 
 ## Change Scope
 
@@ -18,7 +18,6 @@ Derive validation, testing, and analysis scope from the current change set befor
 3. Resolve each package with `go list` from the package directory.
 4. Treat packages under `shared/` or `shared-services/` as shared ownership and include direct dependents.
 5. Escalate scope when a change affects exported APIs, shared or reused units, cross-boundary contracts, or linked functional/contract tests.
-6. Escalate to full repository scope only when the change invalidates global assumptions or the user explicitly requests full-repo validation.
 
 Report the scoped packages, any escalations, and assumptions when scope is non-obvious.
 
@@ -54,7 +53,7 @@ func (c *Counter) Increment() { c.value++ }
 ## Architecture
 
 - Respect clean architecture boundaries.
-- For existing code, request confirmation before introducing or changing a design pattern.
+- For existing code, request confirmation before introducing or changing a design pattern outside the authorized task.
 - Define small interfaces at the point of use.
 - Avoid `init()` unless runtime constraints require it.
 
@@ -175,14 +174,12 @@ func BenchmarkProcess(b *testing.B) {
 
 ## Execution Contract
 
-A Go-related task is complete only when all steps succeed in this order:
+For implementation, complete these checks in order:
 
 1. Format changed Go files in the derived scope with `gofmt -w <files>`.
 2. Format changed Go files in the derived scope with `goimports -w <files>`.
 3. Run `go test` only for scoped packages.
 4. Run `golangci-lint run` only for scoped packages.
-
-Do not run `go test ./...` or `golangci-lint run ./...` unless the user explicitly requests it or scope escalation reaches full-repository impact.
 
 ## Required Closeout
 

@@ -131,7 +131,7 @@ Choose when an algorithm skeleton is stable but specific steps vary.
 Use when:
 
 - there is a fixed workflow with overridable steps
-- inheritance or embedding is already an idiomatic local pattern
+- the language can preserve the algorithm skeleton while allowing specific steps to vary without exposing its internals
 
 Be careful when:
 

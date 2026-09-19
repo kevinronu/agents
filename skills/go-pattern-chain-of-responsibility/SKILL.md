@@ -1,6 +1,6 @@
 ---
 name: go-pattern-chain-of-responsibility
-description: "Lightweight Go Chain of Responsibility file-by-file pattern skeleton. Use primarily when the active `go` skill calls `design-pattern-decision`, receives `Recommended pattern: chain-of-responsibility`, and then loads this skill; also use when the user explicitly asks to implement, scaffold, or inspect Chain of Responsibility in Go. Contains only the folder shape, file-by-file code skeleton, and the few non-obvious Go adaptations worth preserving."
+description: "Go Chain Of Responsibility skeleton and implementation notes. Use when the classifier recommends chain-of-responsibility or the user asks to implement, scaffold, or inspect this pattern in Go."
 ---
 
 # Go Pattern Skeleton: Chain Of Responsibility

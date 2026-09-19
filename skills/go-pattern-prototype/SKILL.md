@@ -1,6 +1,6 @@
 ---
 name: go-pattern-prototype
-description: "Lightweight Go Prototype file-by-file pattern skeleton. Use primarily when the active `go` skill calls `design-pattern-decision`, receives `Recommended pattern: prototype`, and then loads this skill; also use when the user explicitly asks to implement, scaffold, or inspect Prototype in Go. Contains only the folder shape, file-by-file code skeleton, and the few non-obvious Go adaptations worth preserving."
+description: "Go Prototype skeleton and implementation notes. Use when the classifier recommends prototype or the user asks to implement, scaffold, or inspect this pattern in Go."
 ---
 
 # Go Pattern Skeleton: Prototype

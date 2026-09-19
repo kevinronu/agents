@@ -1,6 +1,6 @@
 ---
 name: design-pattern-decision
-description: Internal design-pattern classifier. Use primarily when another active language skill invokes this skill with a plan, tentative code, current code, or intended change to classify; also use when the user explicitly asks which design pattern fits or whether no formal pattern should be used. Return only the classification. Do not trigger this skill just because the codebase contains pattern-related code; a language skill must invoke it, and that language skill keeps ownership of routing and follow-up.
+description: "Select a design pattern or none when invoked by a language skill or explicitly requested by the user. Return classification only."
 ---
 
 # Design Pattern Decision

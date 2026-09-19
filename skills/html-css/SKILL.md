@@ -1,13 +1,13 @@
 ---
 name: html-css
-description: Enforce strict guardrails for implementing and validating HTML/CSS changes. Use when Codex writes, modifies, reviews, formats, scopes, or validates HTML, CSS, SCSS, Vue templates/styles, or JSX/TSX markup and styling, including deriving the affected frontend or component scope from changed files before running checks.
+description: "Implement, review, or validate HTML, CSS, SCSS, Vue templates/styles, and JSX/TSX markup or styling."
 ---
 
 # HTML/CSS
 
 ## Purpose
 
-Act as an HTML/CSS implementation guard. Apply these rules to all markup and styling changes, then format and validate only the derived change scope unless escalation rules require a broader scope.
+Apply these rules when implementing or reviewing markup and styles. Derive validation scope before running checks.
 
 ## Change Scope
 
@@ -20,7 +20,6 @@ Derive validation and formatting scope from the current change set before runnin
 5. Use the nearest `package.json`, `tsconfig`, app root, component directory, or layout directory as the practical ownership boundary.
 6. Escalate scope when a change affects shared UI, reusable styles, exported/public components, design-system contracts, global styles, cross-boundary contracts, or shared frontend paths such as `frontends/shared/`.
 7. Include directly dependent units and linked component, visual, contract, or functional tests when scope escalates.
-8. Escalate to full repository scope only when the change invalidates global assumptions or the user explicitly requests full-repo validation.
 
 Report the scoped files or ownership units, any escalations, and assumptions when scope is non-obvious.
 
@@ -43,10 +42,9 @@ Report the scoped files or ownership units, any escalations, and assumptions whe
 
 ### Architecture and Naming
 
-- Use BEM naming for all new CSS classes: `block__element--modifier`.
-- When modifying existing code, migrate to BEM only within the affected scope.
-- Do not introduce ad hoc or inconsistent class names.
-- Follow an existing naming convention only when it is consistent and at least as clear as BEM. Do not imitate an ad hoc local pattern to match nearby code.
+- Use BEM naming for new CSS classes: `block__element--modifier`. An existing convention is an exception only when it is consistent and at least as clear as BEM.
+- When a BEM migration is needed for the task, limit it to the affected markup and styles.
+- Do not introduce ad hoc or inconsistent class names or imitate an ad hoc local pattern to match nearby code.
 
 ### Scope
 
@@ -76,22 +74,18 @@ Report the scoped files or ownership units, any escalations, and assumptions whe
 
 ## Validation Rules
 
-- Ensure no structural HTML issues are introduced.
-- Ensure CSS or preprocessed CSS compiles cleanly.
 - Ensure scoped styles remain scoped and do not leak globally.
 - Identify any visually breaking change explicitly.
 - Preserve keyboard accessibility and semantic behavior for interactive UI.
 
 ## Execution Contract
 
-An HTML/CSS task is complete only when all steps succeed in this order:
+For implementation, complete these checks in order:
 
 1. Format only edited files with the project formatter, such as Prettier or an equivalent command that targets those files.
 2. Keep indentation, class ordering, and attribute ordering consistent with the shared [formatting rules](../../AGENTS.md#formatting).
 3. Validate that HTML, Vue templates, or JSX/TSX markup are structurally valid within the derived scope.
 4. Validate that CSS, SCSS, or Vue styles compile without errors or warnings within the derived scope.
-
-Do not run repository-wide formatting or validation unless the user explicitly requests it or scope escalation reaches full-repository impact.
 
 ## Required Closeout
 

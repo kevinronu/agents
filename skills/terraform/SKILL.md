@@ -1,13 +1,13 @@
 ---
 name: terraform
-description: Enforce strict guardrails for implementing and validating Terraform changes. Use when Codex writes, modifies, reviews, formats, scopes, initializes, validates, or plans Terraform configuration, modules, variables, outputs, tfvars, providers, backends, or infrastructure code, including deriving the affected Terraform module scope from changed files before running commands.
+description: "Implement, review, format, validate, or plan Terraform configuration, modules, variables, outputs, tfvars, providers, and backends."
 ---
 
 # Terraform
 
 ## Purpose
 
-Act as a Terraform implementation guard. Apply these rules to all infrastructure changes, then initialize, format, validate, and optionally plan only within the derived change scope unless escalation rules require a broader scope.
+Apply these rules when implementing or reviewing Terraform configuration. Derive validation scope before running checks.
 
 ## Change Scope
 
@@ -20,7 +20,6 @@ Derive Terraform command scope from the current change set before running Terraf
 5. For reusable modules under `terraform/modules/*`, use the module directory as the ownership unit.
 6. Escalate scope when a change affects reusable modules, public module interfaces, variables consumed across environments, outputs consumed externally, providers, backends, state assumptions, cross-boundary contracts, or linked functional/contract tests.
 7. Include directly dependent root modules and linked tests when a reusable module or cross-boundary interface changes.
-8. Escalate to full repository scope only when the change invalidates global infrastructure assumptions or the user explicitly requests full-repo validation.
 
 Report the scoped root modules or reusable modules, any escalations, and assumptions when scope is non-obvious.
 
@@ -50,7 +49,7 @@ Report the scoped root modules or reusable modules, any escalations, and assumpt
 - Use modules to encapsulate reusable infrastructure concerns.
 - Reuse existing modules when they already solve the problem.
 - Introduce new modules only when no suitable module exists.
-- When modifying existing infrastructure, request confirmation before restructuring modules.
+- Request confirmation before restructuring existing modules outside the authorized task.
 - Preserve resource ownership unless restructuring is required for the task.
 
 ## Variables and Outputs
@@ -65,15 +64,12 @@ Report the scoped root modules or reusable modules, any escalations, and assumpt
 
 ## Validation Rules
 
-- Ensure formatting is consistent with `terraform fmt`.
-- Ensure configuration is syntactically valid with `terraform validate`.
 - Ensure no unintended resource replacements are introduced.
 - Explicitly identify destructive changes in any plan output.
-- Validate every affected root module after initialization.
 
 ## Execution Contract
 
-A Terraform task is complete only when all steps succeed in this order:
+For implementation, complete these checks in order:
 
 1. Initialize each root module in the derived change scope with `terraform init --backend=false`.
 2. Format only edited Terraform files with `terraform fmt <file>` for each file.
@@ -81,8 +77,6 @@ A Terraform task is complete only when all steps succeed in this order:
 4. Run `terraform plan` only when required by the task or workflow, and only within the derived change scope.
 
 For reusable module changes, format edited files and validate all directly dependent root modules required by scope escalation.
-
-Do not run repository-wide Terraform commands unless the user explicitly requests them or scope escalation reaches full-repository impact.
 
 ## Required Closeout
 

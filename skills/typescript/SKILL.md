@@ -1,13 +1,13 @@
 ---
 name: typescript
-description: Enforce strict guardrails for implementing and validating TypeScript changes. Use when Codex writes, modifies, reviews, formats, scopes, type-checks, or tests TypeScript code, TSX/JSX code, JavaScript in TypeScript-owned modules, Vue script blocks, frontend modules, or public TypeScript contracts, including deriving the affected app, module, or component scope from changed files before running checks and orchestrating design-pattern classification when TypeScript code may need pattern-level structure.
+description: "Implement, review, or validate TypeScript, JavaScript in TypeScript-owned modules, and Vue script logic. Includes TSX/JSX code and public contracts."
 ---
 
 # TypeScript
 
 ## Purpose
 
-Act as a TypeScript implementation guard. Apply these rules to all TypeScript-related changes, then format, type-check, and test only within the derived change scope unless escalation rules require a broader scope.
+Apply these rules when implementing or reviewing TypeScript-related code. Derive validation scope before running checks.
 
 ## Change Scope
 
@@ -20,7 +20,6 @@ Derive formatting, type-checking, and test scope from the current change set bef
 5. Use the nearest `package.json`, `tsconfig`, app root, component directory, store directory, or feature module as the practical ownership boundary.
 6. Escalate scope when a change affects exported/public interfaces, shared modules, reusable components, shared stores, API clients, cross-boundary contracts, or shared frontend paths such as `frontends/shared/`.
 7. Include directly dependent units and linked component, contract, functional, or frontend tests when scope escalates.
-8. Escalate to full repository scope only when the change invalidates global assumptions or the user explicitly requests full-repo validation.
 
 Report the scoped files or ownership units, any escalations, and assumptions when scope is non-obvious.
 
@@ -45,7 +44,7 @@ Report the scoped files or ownership units, any escalations, and assumptions whe
 
 - Apply design patterns only when they clearly match the problem.
 - For new code, introduce patterns when appropriate.
-- For existing code, request confirmation before changing design patterns.
+- For existing code, request confirmation before changing design patterns outside the authorized task.
 - Keep domain logic independent from frameworks and runtime concerns.
 - Prefer existing project helpers, stores, composables, services, and API clients over new abstractions.
 
@@ -94,21 +93,16 @@ Do not invoke `design-pattern-decision` again after returning from a TypeScript 
 
 ## Validation Rules
 
-- Ensure formatting is consistent.
-- Ensure type-checking passes with `tsc --noEmit` or the project equivalent.
 - Ensure no type regressions are introduced.
 - Ensure module boundaries are respected.
-- Run scoped tests when behavior changes.
 
 ## Execution Contract
 
-A TypeScript task is complete only when all steps succeed in this order:
+For implementation, complete these checks in order:
 
 1. Format only edited files with the project formatter, using a command that targets those files.
 2. Type-check within the derived change scope with the project typecheck script or `tsc --noEmit`.
 3. Run tests only within the derived change scope.
-
-Do not format, type-check, or test the entire repository unless the user explicitly requests it or scope escalation reaches full-repository impact.
 
 If no scoped formatter exists, run Prettier only on modified files. If no scoped type-check or test command exists, run the smallest project-level command that covers the derived scope and report that assumption.
 

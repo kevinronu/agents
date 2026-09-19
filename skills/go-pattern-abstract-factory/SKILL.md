@@ -1,6 +1,6 @@
 ---
 name: go-pattern-abstract-factory
-description: "Lightweight Go Abstract Factory file-by-file pattern skeleton. Use primarily when the active `go` skill calls `design-pattern-decision`, receives `Recommended pattern: abstract-factory`, and then loads this skill; also use when the user explicitly asks to implement, scaffold, or inspect Abstract Factory in Go. Contains only the folder shape, file-by-file code skeleton, and the few non-obvious Go adaptations worth preserving."
+description: "Go Abstract Factory skeleton and implementation notes. Use when the classifier recommends abstract-factory or the user asks to implement, scaffold, or inspect this pattern in Go."
 ---
 
 # Go Pattern Skeleton: Abstract Factory
