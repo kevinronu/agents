@@ -1,0 +1,157 @@
+## Folder Shape
+
+```text
+<pattern-root>/
+├── main.go
+├── factory/
+│   ├── factory.go
+│   ├── factory_<type-one>.go
+│   └── factory_<type-two>.go
+└── product/
+    ├── product.go
+    ├── product_<type-one>.go
+    └── product_<type-two>.go
+```
+
+## File-By-File Skeleton
+
+### `product/product.go`
+
+```go
+// Package product defines the contract and the type identifier every product shares.
+package product
+
+// Type identifies a concrete product.
+type Type string
+
+// Product is the common contract for every concrete product.
+type Product interface {
+	Type() Type
+	DoSomething() string
+}
+```
+
+### `product/product_<type>.go`
+
+```go
+package product
+
+import "fmt"
+
+// <productTypeName> identifies one concrete product type.
+const <productTypeName> Type = "<type>"
+
+// <productName> is one concrete product: its type is fixed and only its owner varies.
+type <productName> struct {
+	Owner string
+}
+
+// Type is fixed per concrete product, so it never depends on how the product was built.
+func (p <productName>) Type() Type {
+	return <productTypeName>
+}
+
+func (p <productName>) DoSomething() string {
+	return fmt.Sprintf(
+		"product of type %s owned by %s is doing something",
+		<productTypeName>,
+		p.Owner,
+	)
+}
+```
+
+### `factory/factory.go`
+
+```go
+// Package factory picks which concrete product a caller gets.
+package factory
+
+import (
+	"fmt"
+
+	"<module>/<pattern-root>/product"
+)
+
+// Factory creates one product through the shared factory method.
+type Factory interface {
+	CreateProduct(owner string) product.Product
+}
+
+// OneTimeAction is what an abstract base class would implement in other languages.
+func OneTimeAction(factory Factory, temporaryOwner string) string {
+	created := factory.CreateProduct(temporaryOwner)
+
+	return created.DoSomething()
+}
+
+func New(productType product.Type) (Factory, error) {
+	switch productType {
+	case product.<firstProductTypeName>:
+		return <firstFactoryName>{}, nil
+	case product.<secondProductTypeName>:
+		return <secondFactoryName>{}, nil
+	default:
+		return nil, fmt.Errorf("unsupported product type: %q", productType)
+	}
+}
+```
+
+### `factory/factory_<type>.go`
+
+```go
+package factory
+
+import "<module>/<pattern-root>/product"
+
+// <factoryName> creates one concrete product type.
+type <factoryName> struct{}
+
+// CreateProduct injects the caller's data into this factory's own concrete type.
+func (f <factoryName>) CreateProduct(owner string) product.Product {
+	return product.<productName>{Owner: owner}
+}
+```
+
+Use one file like the template above per concrete product type, replacing placeholders such as `<factoryName>`, `<productName>`, and `<productTypeName>` with names that match the chosen product type.
+
+### `main.go`
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"<module>/<pattern-root>/factory"
+	"<module>/<pattern-root>/product"
+)
+
+func printDetails(p product.Product) {
+	fmt.Printf("Type: %s\n", p.Type())
+	fmt.Printf("Action: %s\n", p.DoSomething())
+}
+
+func main() {
+	typeOne := product.<firstProductTypeName>
+	factoryOne, err := factory.New(typeOne)
+	if err != nil {
+		log.Fatalf("get factory one: %v", err)
+	}
+
+	typeTwo := product.<secondProductTypeName>
+	factoryTwo, err := factory.New(typeTwo)
+	if err != nil {
+		log.Fatalf("get factory two: %v", err)
+	}
+
+	productOne := factoryOne.CreateProduct("Alice")
+	productTwo := factoryTwo.CreateProduct("Bob")
+
+	printDetails(productOne)
+	printDetails(productTwo)
+
+	fmt.Println(factory.OneTimeAction(factoryOne, "Carol"))
+	fmt.Println(factory.OneTimeAction(factoryTwo, "Dave"))
+}
+```

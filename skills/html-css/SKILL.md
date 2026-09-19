@@ -95,7 +95,7 @@ An HTML/CSS task is complete only when all steps succeed in this order:
 
 Do not run repository-wide formatting or validation unless the user explicitly requests it or scope escalation reaches full-repository impact.
 
-If any step fails, fix the issue and rerun the sequence from the appropriate failed step until scoped validation succeeds or a blocker is clearly reported.
+Read and apply the [validation retry rule](../references/validation-retry.md).
 
 ## Required Closeout
 

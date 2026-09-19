@@ -63,17 +63,7 @@ func (c *Counter) Increment() { c.value++ }
 
 Before choosing the Go design, invoke `design-pattern-decision` with this input contract:
 
-```text
-User request:
-Language:
-Relevant files, package, module, or component:
-Existing local conventions:
-Plan, tentative code, or current code summary:
-Abstractions being considered or already present:
-Variation points:
-Expected future cases:
-Testing impact:
-```
+Read and use the [input contract](../design-pattern-decision/references/input-contract.md).
 
 Set `Language` to `go`.
 

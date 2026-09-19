@@ -56,17 +56,7 @@ Report the scoped files or ownership units, any escalations, and assumptions whe
 
 Before choosing the TypeScript design, invoke `design-pattern-decision` with this input contract:
 
-```text
-User request:
-Language:
-Relevant files, package, module, or component:
-Existing local conventions:
-Plan, tentative code, or current code summary:
-Abstractions being considered or already present:
-Variation points:
-Expected future cases:
-Testing impact:
-```
+Read and use the [input contract](../design-pattern-decision/references/input-contract.md).
 
 Set `Language` to `typescript`.
 
@@ -125,7 +115,7 @@ Do not format, type-check, or test the entire repository unless the user explici
 
 If no scoped formatter exists, run Prettier only on modified files. If no scoped type-check or test command exists, run the smallest project-level command that covers the derived scope and report that assumption.
 
-If any step fails, fix the issue and rerun the sequence from the appropriate failed step until scoped validation succeeds or a blocker is clearly reported.
+Read and apply the [validation retry rule](../references/validation-retry.md).
 
 ## Required Closeout
 
