@@ -13,7 +13,7 @@ Apply these rules when implementing or reviewing TypeScript-related code. Derive
 
 Derive formatting, type-checking, and test scope from the current change set before running quality commands.
 
-1. Identify changed files using [Validation Scope](../../AGENTS.md#validation-scope).
+1. Identify changed files using the `Validation Scope` section in [AGENTS.md](../../AGENTS.md).
 2. Treat `*.ts`, `*.tsx`, `*.js`, `*.jsx`, and Vue `<script>` blocks as TypeScript-relevant when they belong to a TypeScript app or module.
 3. Treat `*.vue` changes as TypeScript-relevant when script logic, component contracts, props, emits, stores, routing, API calls, or tests are affected.
 4. Map each changed frontend file to the nearest app, module, or component boundary.

@@ -13,7 +13,7 @@ Apply these rules when implementing or reviewing Terraform configuration. Derive
 
 Derive Terraform command scope from the current change set before running Terraform commands.
 
-1. Identify changed files using [Validation Scope](../../AGENTS.md#validation-scope).
+1. Identify changed files using the `Validation Scope` section in [AGENTS.md](../../AGENTS.md).
 2. Treat `*.tf` and `*.tfvars` files as Terraform-relevant changes.
 3. Resolve each changed Terraform file to its owning module.
 4. For root modules, use the nearest ancestor directory containing `backend.tf`.

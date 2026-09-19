@@ -13,7 +13,7 @@ Apply these rules when implementing or reviewing Go code. Derive validation scop
 
 Derive validation, testing, and analysis scope from the current change set before running quality commands.
 
-1. Identify changed files using [Validation Scope](../../AGENTS.md#validation-scope).
+1. Identify changed files using the `Validation Scope` section in [AGENTS.md](../../AGENTS.md).
 2. Map each modified `*.go` file to its owning package directory.
 3. Resolve each package with `go list` from the package directory.
 4. Treat packages under `shared/` or `shared-services/` as shared ownership and include direct dependents.

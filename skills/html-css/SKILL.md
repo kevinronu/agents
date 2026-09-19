@@ -13,7 +13,7 @@ Apply these rules when implementing or reviewing markup and styles. Derive valid
 
 Derive validation and formatting scope from the current change set before running quality commands.
 
-1. Identify changed files using [Validation Scope](../../AGENTS.md#validation-scope).
+1. Identify changed files using the `Validation Scope` section in [AGENTS.md](../../AGENTS.md).
 2. Treat `*.html`, `*.css`, `*.scss`, Vue `<template>` blocks, Vue `<style>` blocks, and JSX/TSX markup as HTML/CSS-relevant changes.
 3. Map frontend files such as `*.ts`, `*.tsx`, `*.js`, and `*.vue` to the nearest app, module, or component boundary.
 4. Map style/UI files to the owning component or layout boundary.
@@ -83,7 +83,7 @@ Report the scoped files or ownership units, any escalations, and assumptions whe
 For implementation, complete these checks in order:
 
 1. Format only edited files with the project formatter, such as Prettier or an equivalent command that targets those files.
-2. Keep indentation, class ordering, and attribute ordering consistent with the shared [formatting rules](../../AGENTS.md#formatting).
+2. Keep indentation, class ordering, and attribute ordering consistent with the shared `Formatting` section in [AGENTS.md](../../AGENTS.md).
 3. Validate that HTML, Vue templates, or JSX/TSX markup are structurally valid within the derived scope.
 4. Validate that CSS, SCSS, or Vue styles compile without errors or warnings within the derived scope.
 
