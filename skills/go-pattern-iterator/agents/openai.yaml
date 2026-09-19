@@ -1,0 +1,6 @@
+interface:
+  display_name: "Go Iterator"
+  short_description: "Go Iterator pattern skeleton"
+  default_prompt: "Use $go-pattern-iterator to load a lightweight Go Iterator pattern skeleton."
+policy:
+  allow_implicit_invocation: false
