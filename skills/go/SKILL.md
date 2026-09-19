@@ -13,7 +13,7 @@ Act as a Go implementation guard. Apply these rules before and during every Go c
 
 Derive validation, testing, and analysis scope from the current change set before running quality commands.
 
-1. Identify modified Go files with `git diff --name-only <base>...HEAD` or the equivalent base for the current task.
+1. Identify changed files using [Validation Scope](../../AGENTS.md#validation-scope).
 2. Map each modified `*.go` file to its owning package directory.
 3. Resolve each package with `go list` from the package directory.
 4. Treat packages under `shared/` or `shared-services/` as shared ownership and include direct dependents.
@@ -50,7 +50,6 @@ func (c *Counter) Increment() { c.value++ }
 
 - Do not refactor unrelated code.
 - Do not introduce new dependencies unless explicitly requested.
-- Preserve existing architecture and abstractions.
 
 ## Architecture
 
@@ -61,9 +60,9 @@ func (c *Counter) Increment() { c.value++ }
 
 ## Design Patterns
 
-Before choosing the Go design, invoke `design-pattern-decision` with this input contract:
+Invoke `design-pattern-decision` when choosing or changing an abstraction to address recurring complexity, or when explicitly asked to select a pattern. Simple fixes and direct implementations do not require classification.
 
-Read and use the [input contract](../design-pattern-decision/references/input-contract.md).
+When invoking it, read and use the [input contract](../design-pattern-decision/references/input-contract.md).
 
 Set `Language` to `go`.
 
@@ -153,7 +152,7 @@ raw := fmt.Sprintf("value=%s", value)
 
 ## Benchmarks
 
-- Ensure each changed package has at least one benchmark.
+- Ensure each changed package has at least one benchmark; if one already exists, the minimum is satisfied and no additional benchmark is required solely to meet it.
 - Benchmark a representative, performance-relevant operation when practical.
 - Prepare deterministic inputs outside the timed loop.
 - Call `b.ResetTimer()` before measured work.
@@ -184,8 +183,6 @@ A Go-related task is complete only when all steps succeed in this order:
 4. Run `golangci-lint run` only for scoped packages.
 
 Do not run `go test ./...` or `golangci-lint run ./...` unless the user explicitly requests it or scope escalation reaches full-repository impact.
-
-If any step fails, fix the issue and rerun the sequence from the appropriate failed step until the scoped validation succeeds or a blocker is clearly reported.
 
 ## Required Closeout
 

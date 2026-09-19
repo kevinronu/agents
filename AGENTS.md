@@ -24,6 +24,18 @@ If a change touches multiple areas, load every relevant skill before making edit
 
 Do not decide validation scope manually from memory. The relevant skill must derive the change scope from the current change set before formatting, testing, linting, validating, planning, type-checking, or generating commit messages.
 
+Identify the current change set according to the task:
+
+- For local work, inspect staged changes (`git diff --cached`), unstaged changes (`git diff`), and new files (`git ls-files --others --exclude-standard`). Include changes relevant to the task.
+- For branch or PR reviews, use the requested base and target. Include local changes only when requested.
+- For commit messages, use only staged changes, as required by `commit-message`.
+
+Account for renamed and deleted files. With no diff, use the requested files or units. Refresh the change set after edits before deriving validation scope.
+
+Edit only files needed for the task and format only edited files. Validation may include dependent units required by the relevant skill; that does not make those units editing or formatting targets.
+
+If any step fails, fix the issue and rerun the sequence from the appropriate failed step until scoped validation succeeds or a blocker is clearly reported.
+
 ---
 
 ## Code Organization & Readability
@@ -33,6 +45,8 @@ These rules are mandatory and govern every line of code you write or modify. Lan
 Language syntax and compiler requirements remain binding. When they constrain how a rule can be applied, preserve its intent as far as the language allows. Do not treat language idioms, repository conventions, or existing code as permission to ignore these rules.
 
 Existing code and repository conventions are not authority for organization or readability. Apply these rules even when the surrounding code does the opposite. Do not imitate a local smell for consistency, and do not rewrite unrelated code solely to make it comply.
+
+Reuse existing implementations only when they satisfy these rules. Preserve required external contracts while improving internal design as needed for the task.
 
 Optimize for the reader because code is read far more often than it is written. Prefer the simplest design that supports the required behavior. Before adding a hook or generalization for a possible future need, consider the cost of leaving it out and adding it later if it becomes necessary.
 

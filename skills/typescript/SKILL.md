@@ -13,7 +13,7 @@ Act as a TypeScript implementation guard. Apply these rules to all TypeScript-re
 
 Derive formatting, type-checking, and test scope from the current change set before running quality commands.
 
-1. Identify modified files with `git diff --name-only <base>...HEAD` or the equivalent base for the current task.
+1. Identify changed files using [Validation Scope](../../AGENTS.md#validation-scope).
 2. Treat `*.ts`, `*.tsx`, `*.js`, `*.jsx`, and Vue `<script>` blocks as TypeScript-relevant when they belong to a TypeScript app or module.
 3. Treat `*.vue` changes as TypeScript-relevant when script logic, component contracts, props, emits, stores, routing, API calls, or tests are affected.
 4. Map each changed frontend file to the nearest app, module, or component boundary.
@@ -26,11 +26,8 @@ Report the scoped files or ownership units, any escalations, and assumptions whe
 
 ## Change Rules
 
-- Apply changes only within the derived change scope.
-- Expand scope only when escalation conditions require it.
 - Do not modify unrelated code, modules, components, stores, routes, or tests.
 - Keep changes minimal and focused.
-- Preserve existing module boundaries and public APIs.
 - Do not introduce new runtime dependencies unless explicitly requested.
 
 ## Code Rules
@@ -54,9 +51,9 @@ Report the scoped files or ownership units, any escalations, and assumptions whe
 
 ## Design Patterns
 
-Before choosing the TypeScript design, invoke `design-pattern-decision` with this input contract:
+Invoke `design-pattern-decision` when choosing or changing an abstraction to address recurring complexity, or when explicitly asked to select a pattern. Simple fixes and direct implementations do not require classification.
 
-Read and use the [input contract](../design-pattern-decision/references/input-contract.md).
+When invoking it, read and use the [input contract](../design-pattern-decision/references/input-contract.md).
 
 Set `Language` to `typescript`.
 
@@ -107,15 +104,13 @@ Do not invoke `design-pattern-decision` again after returning from a TypeScript 
 
 A TypeScript task is complete only when all steps succeed in this order:
 
-1. Format only files in the derived change scope with the project formatter, such as `npm run format`, `pnpm run format`, or Prettier on modified files.
+1. Format only edited files with the project formatter, using a command that targets those files.
 2. Type-check within the derived change scope with the project typecheck script or `tsc --noEmit`.
 3. Run tests only within the derived change scope.
 
 Do not format, type-check, or test the entire repository unless the user explicitly requests it or scope escalation reaches full-repository impact.
 
 If no scoped formatter exists, run Prettier only on modified files. If no scoped type-check or test command exists, run the smallest project-level command that covers the derived scope and report that assumption.
-
-Read and apply the [validation retry rule](../references/validation-retry.md).
 
 ## Required Closeout
 

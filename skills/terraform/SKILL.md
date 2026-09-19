@@ -13,7 +13,7 @@ Act as a Terraform implementation guard. Apply these rules to all infrastructure
 
 Derive Terraform command scope from the current change set before running Terraform commands.
 
-1. Identify modified files with `git diff --name-only <base>...HEAD` or the equivalent base for the current task.
+1. Identify changed files using [Validation Scope](../../AGENTS.md#validation-scope).
 2. Treat `*.tf` and `*.tfvars` files as Terraform-relevant changes.
 3. Resolve each changed Terraform file to its owning module.
 4. For root modules, use the nearest ancestor directory containing `backend.tf`.
@@ -26,8 +26,6 @@ Report the scoped root modules or reusable modules, any escalations, and assumpt
 
 ## Change Rules
 
-- Apply changes only within the derived change scope.
-- Expand scope only when escalation conditions require it.
 - Do not modify unrelated resources, modules, variables, outputs, providers, backends, or configurations.
 - Keep changes minimal and focused.
 
@@ -53,7 +51,7 @@ Report the scoped root modules or reusable modules, any escalations, and assumpt
 - Reuse existing modules when they already solve the problem.
 - Introduce new modules only when no suitable module exists.
 - When modifying existing infrastructure, request confirmation before restructuring modules.
-- Preserve existing module boundaries and resource ownership.
+- Preserve resource ownership unless restructuring is required for the task.
 
 ## Variables and Outputs
 
@@ -78,15 +76,13 @@ Report the scoped root modules or reusable modules, any escalations, and assumpt
 A Terraform task is complete only when all steps succeed in this order:
 
 1. Initialize each root module in the derived change scope with `terraform init --backend=false`.
-2. Format only within the derived change scope with `terraform fmt -recursive`.
+2. Format only edited Terraform files with `terraform fmt <file>` for each file.
 3. Validate each initialized root module in the derived change scope with `terraform validate`.
 4. Run `terraform plan` only when required by the task or workflow, and only within the derived change scope.
 
-For reusable module changes, run formatting in the module scope and validate all directly dependent root modules required by scope escalation.
+For reusable module changes, format edited files and validate all directly dependent root modules required by scope escalation.
 
 Do not run repository-wide Terraform commands unless the user explicitly requests them or scope escalation reaches full-repository impact.
-
-Read and apply the [validation retry rule](../references/validation-retry.md).
 
 ## Required Closeout
 

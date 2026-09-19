@@ -13,7 +13,7 @@ Act as an HTML/CSS implementation guard. Apply these rules to all markup and sty
 
 Derive validation and formatting scope from the current change set before running quality commands.
 
-1. Identify modified files with `git diff --name-only <base>...HEAD` or the equivalent base for the current task.
+1. Identify changed files using [Validation Scope](../../AGENTS.md#validation-scope).
 2. Treat `*.html`, `*.css`, `*.scss`, Vue `<template>` blocks, Vue `<style>` blocks, and JSX/TSX markup as HTML/CSS-relevant changes.
 3. Map frontend files such as `*.ts`, `*.tsx`, `*.js`, and `*.vue` to the nearest app, module, or component boundary.
 4. Map style/UI files to the owning component or layout boundary.
@@ -70,8 +70,6 @@ Report the scoped files or ownership units, any escalations, and assumptions whe
 
 ## Change Rules
 
-- Apply changes only within the derived change scope.
-- Expand scope only when escalation conditions require it.
 - Do not modify unrelated markup or styles.
 - Do not introduce new runtime dependencies unless explicitly requested.
 - Keep changes minimal and focused.
@@ -88,14 +86,12 @@ Report the scoped files or ownership units, any escalations, and assumptions whe
 
 An HTML/CSS task is complete only when all steps succeed in this order:
 
-1. Format files in the derived change scope with the project formatter, such as Prettier or an equivalent project command.
-2. Keep indentation, class ordering, and attribute ordering consistent with project conventions.
+1. Format only edited files with the project formatter, such as Prettier or an equivalent command that targets those files.
+2. Keep indentation, class ordering, and attribute ordering consistent with the shared [formatting rules](../../AGENTS.md#formatting).
 3. Validate that HTML, Vue templates, or JSX/TSX markup are structurally valid within the derived scope.
 4. Validate that CSS, SCSS, or Vue styles compile without errors or warnings within the derived scope.
 
 Do not run repository-wide formatting or validation unless the user explicitly requests it or scope escalation reaches full-repository impact.
-
-Read and apply the [validation retry rule](../references/validation-retry.md).
 
 ## Required Closeout
 
