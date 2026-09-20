@@ -1,0 +1,6 @@
+interface:
+  display_name: "Go Mediator"
+  short_description: "Go Mediator pattern skeleton"
+  default_prompt: "Use $go-pattern-mediator to load a lightweight Go Mediator pattern skeleton."
+policy:
+  allow_implicit_invocation: false
