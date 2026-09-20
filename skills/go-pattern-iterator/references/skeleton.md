@@ -5,22 +5,6 @@ how a concrete source stores or retrieves them. The reference implementation
 models profiles from two social networks; preserve the sequence contract and
 replace that domain only when the task calls for another one.
 
-## Important Go details
-
-- `iter.Seq[T]` is consumed with `for value := range sequence`. Its function
-  receives a `yield` callback; return as soon as `yield` returns `false`, so a
-  caller's `break` stops work upstream.
-- Use `iter.Pull` only when a caller must manually pause and resume. The
-  returned `stop` function releases the iterator early, so expose it and call
-  it with `defer` when the sequence might not be exhausted.
-- When looking up a pointer in `[]Profile`, range over indices and return
-  `&profiles[index]`. A range value is a copy, so `&profile` would not point to
-  the element in the slice.
-- Keep clients dependent on `SocialNetwork`, not on a concrete source. Each
-  source may differ internally while yielding the same profiles.
-- A lookup can yield `nil` for a configured contact that is no longer present.
-  Consumers that dereference profiles must intentionally skip it.
-
 ## Folder shape
 
 ```text
@@ -262,3 +246,19 @@ func main() {
 
 Use `range` for the normal bulk-processing path. Keep `ProfileReviewer` only
 when its explicit pause/resume behavior is part of the requirement.
+
+## Important Go Details
+
+- `iter.Seq[T]` is consumed with `for value := range sequence`. Its function
+  receives a `yield` callback; return as soon as `yield` returns `false`, so a
+  caller's `break` stops work upstream.
+- Use `iter.Pull` only when a caller must manually pause and resume. The
+  returned `stop` function releases the iterator early, so expose it and call
+  it with `defer` when the sequence might not be exhausted.
+- When looking up a pointer in `[]Profile`, range over indices and return
+  `&profiles[index]`. A range value is a copy, so `&profile` would not point to
+  the element in the slice.
+- Keep clients dependent on `SocialNetwork`, not on a concrete source. Each
+  source may differ internally while yielding the same profiles.
+- A lookup can yield `nil` for a configured contact that is no longer present.
+  Consumers that dereference profiles must intentionally skip it.

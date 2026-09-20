@@ -1,12 +1,3 @@
-## Non-Obvious Go Notes
-
-
-- Keep the small `Command` contract and its LIFO history together. `Execute` returns whether the receiver should record the operation, so non-reversible commands stay out of undo history.
-- Let the receiver own execution, history, and undo. Clients create a command with its receiver, then submit it without learning how history is stored.
-- Embed a private state struct in commands that share a receiver and backup. Its `Undo` method is the Go substitute for shared fields and behavior in an abstract command class.
-- Give each command a constructor only when it binds a receiver or required state. A command that changes nothing returns `false`; it does not need a compensating undo entry.
-- Keep concrete commands focused on one receiver operation. The receiver need not depend on concrete command packages.
-
 ## Folder Shape
 
 ```text
@@ -192,3 +183,11 @@ func main() {
 	document.Undo()
 }
 ```
+
+## Important Go Details
+
+- Keep the small `Command` contract and its LIFO history together. `Execute` returns whether the receiver should record the operation, so non-reversible commands stay out of undo history.
+- Let the receiver own execution, history, and undo. Clients create a command with its receiver, then submit it without learning how history is stored.
+- Embed a private state struct in commands that share a receiver and backup. Its `Undo` method is the Go substitute for shared fields and behavior in an abstract command class.
+- Give each command a constructor only when it binds a receiver or required state. A command that changes nothing returns `false`; it does not need a compensating undo entry.
+- Keep concrete commands focused on one receiver operation. The receiver need not depend on concrete command packages.

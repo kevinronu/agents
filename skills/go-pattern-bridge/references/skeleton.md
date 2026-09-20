@@ -1,12 +1,3 @@
-## Non-Obvious Go Notes
-
-
-- Keep the implementation interface in its own package so refined abstractions depend on one shared low-level contract instead of concrete renderers or backends.
-- Use embedding or composition in the abstraction side to hold the implementation. This is the Go substitute for carrying shared implementation state through an abstract base type.
-- Bridge fits when both sides vary independently. If only one side varies, a simpler pattern is usually enough.
-- Keep implementation methods small and composable so refined abstractions can assemble different outputs without learning format-specific details.
-- Refined abstractions should differ mainly in the content or workflow they compose, not in how they talk to the implementation.
-
 ## Folder Shape
 
 ```text
@@ -166,3 +157,11 @@ func main() {
 	}
 }
 ```
+
+## Important Go Details
+
+- Keep the implementation interface in its own package so refined abstractions depend on one shared low-level contract instead of concrete renderers or backends.
+- Use embedding or composition in the abstraction side to hold the implementation. This is the Go substitute for carrying shared implementation state through an abstract base type.
+- Bridge fits when both sides vary independently. If only one side varies, a simpler pattern is usually enough.
+- Keep implementation methods small and composable so refined abstractions can assemble different outputs without learning format-specific details.
+- Refined abstractions should differ mainly in the content or workflow they compose, not in how they talk to the implementation.
