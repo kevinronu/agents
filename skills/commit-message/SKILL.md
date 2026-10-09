@@ -42,13 +42,15 @@ Omit the final blank line and ticket line when no ticket is detected.
 - Use optional scope only when it is clear and useful.
 - Keep the title between 20 and 79 characters.
 - Use imperative mood, such as `Fix`, not `Fixed`.
-- Capitalize the title.
+- Capitalize the type and the first word of the subject after the colon, such as
+  `Fix: Handle empty responses`, not `Fix: handle empty responses`.
 - Do not end the title with a period.
 
 ## Body Rules
 
 - Write the message in English.
 - Keep every line under 80 characters.
+- Capitalize the first word after `What:` and `Why:`.
 - Use concise, specific wording based on the staged diff.
 - Preserve exact spacing: one blank line after the title and one blank line before the ticket when a ticket exists.
 - Do not add extra blank lines.
