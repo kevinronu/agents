@@ -141,6 +141,16 @@ raw := fmt.Sprintf("value=%s", value)
 - Isolate dependencies with mocks or fakes.
 - Use `t.Context()` by default.
 - Use `t.Cleanup` for teardown.
+- When a test changes shared state (package-level vars, mock flags, logger output), capture the original value first, change it, then restore that exact value in `t.Cleanup` right after the change. Restore only what the test changed; do not reset the whole mock or assign a hardcoded value.
+
+```go
+originalValue := pkg.SharedValue
+pkg.SharedValue = testValue
+
+t.Cleanup(func() {
+	pkg.SharedValue = originalValue
+})
+```
 - Make reusable test helpers call `t.Helper()`.
 - Use `t.Parallel()` only when isolation is safe.
 - Do not call `t.Parallel()` in tests that mutate package-level vars, logger output, shared mocks, or other shared mutable globals.
