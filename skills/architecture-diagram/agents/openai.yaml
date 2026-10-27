@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architecture Diagram"
+  short_description: "Verified AWS architecture diagrams in draw.io"
+  default_prompt: "Use $architecture-diagram to draw the architecture of this system or design."

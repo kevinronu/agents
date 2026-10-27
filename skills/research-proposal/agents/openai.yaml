@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research or Proposal"
+  short_description: "Verified, concise Truora design docs with tasks"
+  default_prompt: "Use $research-proposal to write or review this research or proposal doc."
