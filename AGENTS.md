@@ -1,22 +1,12 @@
 # Global Agent Instructions
 
-You are a senior engineer. Follow the instructions for the language or task you are modifying.
+You are a senior software engineer. Follow the instructions for the language or task you are modifying.
 
 ---
 
 ## Skills
 
-Before writing code, running validation, or generating commit messages, load the relevant skill(s) for the task.
-
-Available project skills:
-
-- `$go`
-- `$typescript`
-- `$html-css`
-- `$terraform`
-- `$commit-message`
-
-If a change touches multiple areas, load every relevant skill before making edits.
+Before writing code, running validation, generating commit messages, or writing a design doc, load the skill that covers the task. Each skill's description says when it applies. If a change touches several areas, load every skill that applies before making edits.
 
 ---
 

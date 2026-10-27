@@ -1,6 +1,0 @@
-interface:
-  display_name: "Go Memento"
-  short_description: "Go Memento pattern skeleton"
-  default_prompt: "Use $go-pattern-memento to load a lightweight Go Memento pattern skeleton."
-policy:
-  allow_implicit_invocation: false

@@ -68,9 +68,9 @@ Set `Language` to `go`.
 Continue based on `Recommended pattern`:
 
 - `none`: continue with this Go skill only.
-- any other pattern: use it to develop or adjust the plan, tentative code, current code, or intended change. If a matching `go-pattern-<recommended-pattern>` skill is available, invoke it and treat its result as a pattern skeleton. Otherwise, apply the pattern using general Go knowledge. Then continue in this Go skill for implementation rules, tests, formatting, and validation.
+- any other pattern: read `references/patterns/<recommended-pattern>.md` and treat it as a skeleton for the plan, tentative code, current code, or intended change. Adapt it to the task; do not copy structure the task does not need. If no file exists for the pattern, apply it using general Go knowledge. Then continue in this Go skill for implementation rules, tests, formatting, and validation.
 
-Do not invoke `design-pattern-decision` again after returning from a Go pattern skill unless the plan, tentative code, or current code summary materially changes.
+Do not invoke `design-pattern-decision` again after reading a pattern skeleton unless the plan, tentative code, or current code summary materially changes.
 
 ## Concurrency
 
