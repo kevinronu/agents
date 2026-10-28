@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research or Proposal Review"
+  short_description: "Verified, anchored comments on a research or proposal doc"
+  default_prompt: "Use $research-proposal-review to review this research or proposal doc."

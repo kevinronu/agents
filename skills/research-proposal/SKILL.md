@@ -13,7 +13,8 @@ thing once, from the general to the particular.
 
 [profile.md](profile.md) holds what changes from one company or team to another: the header
 fields, the cloud provider, where each kind of claim is verified, what already exists, and
-how the author likes to work. Edit it when you adopt the skill.
+how the author likes to work. Edit it when you adopt the skill; the `research-proposal-review` skill
+reads this same profile.
 
 Before writing, compare the profile with the repository: the provider and the infrastructure
 tool against the directories and config files, the author against `git config user.name`,
