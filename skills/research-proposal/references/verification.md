@@ -1,14 +1,15 @@
 # Verification
 
-Every statement in the doc is checked before it is written. The places to check:
+Every statement in the doc is checked before it is written. The concrete places are in the
+"Where to verify" table of [profile.md](../profile.md); this is what each kind of claim needs.
 
-| Claim | Where |
+| Claim | Source |
 |---|---|
-| Who calls what, with which operation, in which order | The Go code: the lambda's `main.go`, the storage package, the models |
-| Triggers, filters, retries, DLQs, regions | Terraform under `terraform/deploy/envs/cloud-arch/` |
-| How much, how often, how many | Lens (the `lens-api` skill), with the query kept in the Appendix so anyone can run it |
-| What a ticket decided, and when | Jira |
-| Limits of an AWS service | The AWS docs, linked |
+| Who calls what, with which operation, in which order | The code |
+| Triggers, filters, retries, dead-letter queues, regions | The infrastructure code |
+| How much, how often, how many | The metrics source, with the query kept in the Appendix so anyone can run it |
+| What a ticket decided, and when | The ticket tracker |
+| Limits of a provider service | The provider's docs, linked |
 
 ## Follow the data end to end
 

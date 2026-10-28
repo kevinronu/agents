@@ -2,13 +2,13 @@
 
 Date: <Mon DD, YYYY>
 
-PM: Juan Carlos Giraldo
+PM: <from the profile>
 
-Tech Owner: Kevin Robles
+Tech Owner: <from the profile>
 
-Parent Proposal: <link>
+Parent Proposal: <link, only when there is one>
 
-Team: Spica
+Team: <from the profile>
 
 Time to read: ⌛30:00
 
@@ -54,11 +54,11 @@ None.
 
 The legend at the top of the diagram explains the colors, the marks and the lines.
 
-## Lambda responsibilities
+## <Service> responsibilities
 
-**<lambda> (new | changes).** <What it does and why it exists, in one paragraph.>
+**<service> (new | changes).** <What it does and why it exists, in one paragraph.>
 
-The **Implementation details** tab has the steps of each lambda.
+The **Implementation details** tab has the steps of each <service>.
 
 ## Data model
 

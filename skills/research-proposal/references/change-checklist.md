@@ -11,6 +11,7 @@ diagram. A change that reaches only one of them is not done.
 4. **Agreement.** Goals, Non-Goals, Solution, Failure Modes, Launch and Tasks say the same
    thing. A task is not a non-goal; an alarm in Failure Modes exists in a task; a deploy step
    in Launch matches the order of the tasks.
-5. **Size.** Count the words of the body up to "Stop reading here" and compare with the limit.
+5. **Size.** Count the words of the body up to "Stop reading here" and compare with the
+   limit in [document-shape.md](document-shape.md).
 6. **Verification.** Every new claim went through [verification.md](verification.md); every
    pending item is marked and listed in the reply.

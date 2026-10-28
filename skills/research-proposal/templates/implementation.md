@@ -1,6 +1,6 @@
 # Implementation details: <name>
 
-This tab is the developer guide for the proposal "<name>". Read the proposal first: its Solution has the architecture, the job of each lambda and the data model.
+This tab is the developer guide for the proposal "<name>". Read the proposal first: its Solution has the architecture, the job of each <service> and the data model.
 
 # Architecture
 
@@ -12,17 +12,17 @@ This tab is the developer guide for the proposal "<name>". Read the proposal fir
 
 **Path:** `<directory>`
 
-**Used by:** `<lambda>`, `<lambda>`
+**Used by:** `<service>`, `<service>`
 
 **Description:** <What it does, in two or three sentences. A new function's signature goes here.>
 
 **Steps:**
 
-1. <Step with the function and the AWS operation.>
+1. <Step with the function and the operation.>
 
-# Lambdas
+# <Services>
 
-## <lambda> (new | changes)
+## <service> (new | changes)
 
 **Path:** `<directory>`
 
@@ -40,16 +40,16 @@ This tab is the developer guide for the proposal "<name>". Read the proposal fir
 
 **On failure:** <What happens halfway, what a retry does, where the failed item ends up.>
 
-**IAM (new):** <action> on <resource>.
+**<Permissions> (new):** <action> on <resource>.
 
-# Terraform
+# <Infrastructure tool>
 
 **Regions.** <Where each piece runs and why.>
 
 **Resources:**
 
-* <Table, bucket, queue or pipe with the settings that matter.>
-* The IAM of each lambda, listed in its section.
+* <Table, bucket, queue or event router with the settings that matter.>
+* The <permissions> of each <service>, listed in its section.
 
 # Alarms
 
