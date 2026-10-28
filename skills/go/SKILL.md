@@ -72,6 +72,13 @@ Continue based on `Recommended pattern`:
 
 Do not invoke `design-pattern-decision` again after reading a pattern skeleton unless the plan, tentative code, or current code summary materially changes.
 
+## Generics
+
+- Use a type parameter when the same logic serves several types and the caller's own types must be checked at compile time. Do not use one for a single type, or where an interface already expresses the behavior.
+- Put a type parameter on the narrowest declaration that needs it. A method may declare its own type parameters; put one on the type only when its fields or most of its methods use it.
+- Name a type parameter by its scope and meaning. Use a conventional letter for a short scope and a known shape (`T`; `K`, `V`; `S ~[]E`; `M ~map[K]V`). Use a descriptive noun when the parameter spans a type's fields and methods, when several parameters share a constraint, or when no letter convention fits. Never reuse the name of another identifier in the package.
+- Let callers rely on type inference. When a type parameter appears only in the result or in no argument, callers must pass it explicitly; prefer that over a placeholder type inside the generic code.
+
 ## Concurrency
 
 - Pass `context.Context` as the first parameter for cancellable or long-running work.
@@ -97,11 +104,19 @@ Open with the identifier name and the shortest true sentence about what it yield
 1. What can bite the caller: panics, zero-value behavior, nil results, concurrency safety, aliasing, cost, or an invariant worth stating. `strings.Builder.Grow` documents `If n is negative, Grow panics`, and `strings.Builder.Len` documents `b.Len() == len(b.String())`.
 2. The specification that defines the behavior, when the authority is outside this code. `base64.StdEncoding` documents `as defined in RFC 4648`.
 
-## Accessors
+## Function and Method Names
 
-- Do not prefix a function or method name with `Get`. Start with the noun instead, such as `Counts` over `GetCounts`.
-- Use a verb such as `Fetch` or `Compute` when the call is expensive, blocks, or can fail, so the cost is visible at the call site.
-- Name a mutator `SetX`. The asymmetry with the `X` accessor is intentional in Go.
+Classify every new or renamed function or method before naming it. The first row that matches decides.
+
+| Kind | Test | Name |
+| :---- | :---- | :---- |
+| Constructor | Returns a new value of a type in its package | `New` or `New<Type>` |
+| Predicate | Returns only a `bool` | `Is…`, `Has…`, `Can…` |
+| Accessor | A method that only reads its receiver, at most looking it up by its arguments: no side effects, cannot fail, cheap | A noun, never `Get…` (`Counts`, not `GetCounts`) |
+| Mutator | A method that sets one field of its receiver | `Set<Field>`; the asymmetry with the accessor is intentional in Go |
+| Everything else | Builds, converts, derives from its arguments, validates, can fail, blocks, or has side effects | A verb or verb phrase (`CollectReasons`, `Validate`, `Fetch`) |
+
+- A package-level function is never an accessor, even when the standard library names one with a noun (`reflect.TypeOf`, `maps.Keys`).
 - Name the accessor for a process-wide shared value after what it returns, such as `Shared` or `Default`. Prefer an exported variable when the value needs no lazy or fallible setup.
 
 ## Packages
@@ -116,6 +131,10 @@ Open with the identifier name and the shortest true sentence about what it yield
 - Use value receivers for required value objects that validate their own invariants.
 - Make pointer receiver `Validate()` methods handle `nil` explicitly.
 - Do not duplicate presence checks across layers; validate data at the layer that owns it.
+- Parse enum-like input once, at the boundary that reads the request, into a typed value built by a single constructor. Pass only the typed value inward; do not re-validate or re-normalize it downstream.
+- Match enum-like input exactly against its canonical spelling. Do not trim or case-fold it to make it match; reject anything else.
+- The rejection names the parameter and the accepted values, or where they are documented when the set is large. It does not echo the received value; log that instead.
+- When a contract requires normalization, such as Unicode NFC, do it inside that constructor before validating, and document it as part of the contract.
 
 ## Formatting Verbs
 
@@ -186,6 +205,7 @@ func BenchmarkProcess(b *testing.B) {
 
 For implementation, complete these checks in order:
 
+0. List every identifier the change adds or renames, exported or not, and check each against "Function and Method Names" and the Names section of `~/.claude/CLAUDE.md`. Rename before formatting.
 1. Format changed Go files in the derived scope with `gofmt -w <files>`.
 2. Format changed Go files in the derived scope with `goimports -w <files>`.
 3. Run `go test` only for scoped packages.
