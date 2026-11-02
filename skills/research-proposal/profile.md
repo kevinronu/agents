@@ -31,7 +31,7 @@ Time to discuss: ⌛15:00
 |---|---|
 | Code: who calls what, which operation, in which order | The service's `main.go`, the storage package, the models |
 | Infrastructure: triggers, filters, retries, dead-letter queues, regions | The Terraform directory above |
-| Numbers: how much, how often, how many | Lens, through the `lens-api` skill |
+| Numbers: how much, how often, how many | Lens, through the `lens` skill |
 | Decisions: what a ticket decided, and when | Jira |
 
 ## What already exists
