@@ -74,7 +74,7 @@ Do not invoke `design-pattern-decision` again after reading a pattern skeleton u
 
 ## Services
 
-A service is one deployed entry point (a Lambda on AWS). When creating one, or changing its entry point, processor, contracts, errors or logs, read [references/service/README.md](references/service/README.md) for the shape and its rules, then the file of its event source under [references/service/event-sources/](references/service/event-sources/) for what the handler receives and returns. Provider names are in [references/service/providers.md](references/service/providers.md).
+A service is one deployed entry point (a Lambda on AWS). When creating one, or changing its entry point, processor, contracts, errors or logs, read [references/service/README.md](references/service/README.md) for the shape and its rules, then the file of its event source under [references/service/event-sources/](references/service/event-sources/) for what the handler receives and returns. The name and the choice of a building block, on any provider, are in the `cloud-standards` skill, `terms/<category>/<term>.md`.
 
 ## Generics
 

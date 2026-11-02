@@ -3,9 +3,10 @@
 ## Language
 
 - B1 English: short sentences, plain words. A PM who never saw the product follows it.
-- Official names only: the provider's names for its services and resources
-  ([providers.md](providers.md)), and the real names of tables, services, fields and API
-  operations, as they appear in the code.
+- Official names only: the provider's names for its services and resources (the
+  `cloud-standards` skill), and the real names of tables, services, fields and API
+  operations, as they appear in the code. A heading that holds a neutral term takes the
+  provider's name too: `<Service> responsibilities` is "Lambda responsibilities" on AWS.
 - We act, the service does not: "we ask the provider to index the image", never "the
   provider saves".
 - Never invent a team, and never name another person's research in the doc.

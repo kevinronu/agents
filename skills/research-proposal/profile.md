@@ -6,8 +6,8 @@ skill compares it with the repository before writing and reports any disagreemen
 ## Company
 
 - Company: Truora
-- Cloud provider: AWS. The doc uses its names, from [references/providers.md](references/providers.md).
-- Fixed choices, over the defaults of that table: Service is Lambda.
+- Cloud provider: AWS. The doc uses its names, from the `cloud-standards` skill.
+- Fixed choices, over that skill's Chosen: Service is Lambda.
 - Infrastructure as code: Terraform, under `terraform/deploy/envs/cloud-arch/`.
 - Code: Go. A Lambda has its `main.go`; storage packages live under `storage/`.
 

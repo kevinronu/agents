@@ -1,8 +1,9 @@
 # Services
 
-A service is one entry point deployed as a managed function: a Lambda on AWS, see
-[providers.md](providers.md) for the other providers. This document gives the shape every
-service follows and the reason behind each rule. The rules name mechanisms, not libraries;
+A service is one entry point deployed as a managed function; the `cloud-standards` skill
+names it on each provider (`terms/compute/service.md`) and the event sources that start it
+(`terms/event-sources/`). This document gives the shape every service follows and the
+reason behind each rule. The rules name mechanisms, not libraries;
 [Names in scrap-services](#names-in-scrap-services) maps each mechanism to that repo, and the
 canonical example is `digital-identity/whatsapp/functions/repair-client-inbound-flows` there.
 Read it before writing a new service.

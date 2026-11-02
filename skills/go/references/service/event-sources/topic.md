@@ -4,8 +4,7 @@ The handler receives the topic event with one record per invocation and returns 
 error. `createProcessor` parses the record's message into the input contract.
 
 Return policy: as in a direct invocation, return the error only when it is retryable. A
-returned error makes the topic redeliver the message, so a rejection must return nil or it is
-redelivered until the retry policy gives up.
+returned error makes the topic redeliver the message, so a rejection must return nil.
 
-scrap-services (AWS): `events.SNSEvent` with `retryableOrNil(err)`.
-Example: `digital-identity/whatsapp/functions/follow-up`.
+The provider's types are in `cloud-standards`, `terms/event-sources/topic-trigger.md`.
+scrap-services: `digital-identity/whatsapp/functions/follow-up`.

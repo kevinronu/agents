@@ -7,5 +7,6 @@ the caller (sync invoke) retries. Anything else is already in the logs and retur
 and no output. On a synchronous call the caller gets an empty result after a rejection; the
 only signal is the warning log.
 
-scrap-services: `func handler(ctx, input models.<Service>Input) (*models.<Service>Output, error)`
-with `retryableOrNil(err)`. Example: `digital-identity/whatsapp/functions/repair-client-inbound-flows`.
+The provider's types are in `cloud-standards`, `terms/event-sources/direct-invocation.md`.
+scrap-services: `retryableOrNil(err)` in
+`digital-identity/whatsapp/functions/repair-client-inbound-flows`.

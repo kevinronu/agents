@@ -26,7 +26,7 @@ which one is right; do not change the profile on your own.
 | When | Read |
 |---|---|
 | Starting a doc, or unsure which kind it is | [references/document-shape.md](references/document-shape.md): research vs proposal, header, sections, size, the deliverables |
-| Choosing or naming a service, a store, a queue or an operation | [references/providers.md](references/providers.md): one neutral term per role, the provider's default, and when its alternative applies |
+| Choosing or naming a service, a store, a queue or an operation | The `cloud-standards` skill, `terms/<category>/<term>.md`: the neutral term, the service chosen on the provider, and when its alternative applies |
 | Writing or rewriting any section | [references/writing-rules.md](references/writing-rules.md): language, names, order, and what each section holds |
 | Before stating a fact, a number, a call or a name | [references/verification.md](references/verification.md) |
 | Writing or changing Tasks & Estimation or the CSV | [references/tasks.md](references/tasks.md) |

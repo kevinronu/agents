@@ -14,7 +14,6 @@ Return policy by case:
 The processor takes its fields from the path, the query and the body through its value-object
 constructors; the client id and the authorizer come from the request context.
 
-scrap-services (AWS): `events.APIGatewayProxyRequest` in; `apigateway.NewErrorResponse(err)`
-for rejections, with the constructors in `shared/apigateway` (`NewInvalidRequestError`,
-`NewNamedNotFoundError`, ...), and `apigateway.NewJSONResponse(http.StatusOK, output)` on
-success. Example: `digital-identity/whatsapp/functions/list-inbounds`.
+The provider's types and response helpers are in `cloud-standards`,
+`terms/event-sources/http-request.md`.
+scrap-services: `digital-identity/whatsapp/functions/list-inbounds`.

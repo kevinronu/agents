@@ -6,7 +6,7 @@ It never repeats the proposal: a struct lives in Data model, a reason lives in S
 tab links to them.
 
 Template: [templates/implementation.md](../templates/implementation.md). Headings and terms
-take the provider's names ([providers.md](providers.md)): "Lambdas" on AWS, "Terraform" when
+take the provider's names (the `cloud-standards` skill): "Lambdas" on AWS, "Terraform" when
 that is the infrastructure tool.
 
 ## Sections, in this order

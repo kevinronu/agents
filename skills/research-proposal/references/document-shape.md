@@ -22,8 +22,8 @@ the labeled fields of the Implementation details tab.
 6. Goals
 7. Non-Goals
 8. Solution, with these subsections: the design in short sections, Architecture, `<Service>`
-   responsibilities (the provider's name for the service, from
-   [providers.md](providers.md)), Data model, Cost, Alternative solutions considered,
+   responsibilities (the provider's name for the service, from the `cloud-standards`
+   skill), Data model, Cost, Alternative solutions considered,
    Failure Modes, Launch and adoption
 9. `Stop reading here`
 10. Tasks & Estimation
