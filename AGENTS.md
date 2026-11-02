@@ -47,6 +47,8 @@ Optimize for the reader because code is read far more often than it is written. 
 - Give each module, class, and function one coherent topic or responsibility.
 - Organize code like a newspaper article: public entry points and high-level policy first, then progressively lower-level details.
 - Place a caller above the helpers it invokes when the language permits it. Keep those helpers nearby and, when practical, order them by first use.
+- Treat a type as one unit: its declaration, then its constructors, then its members. Place that unit below the first code that uses it, as you would a helper. This applies to every kind of type, including enums and their values.
+- Inside a type, declare first the members its behavior works with, then supporting members such as timings or recorded errors.
 - Descend one level of abstraction at a time. Do not mix business intent, orchestration, and low-level mechanics in the same block.
 - Keep strongly related concepts vertically close. Use blank lines to separate distinct concepts.
 - Declare local variables close to their first use. Keep fields, constants, and other module-level declarations in a predictable location that preserves the clearest reading order allowed by the language.

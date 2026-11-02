@@ -72,6 +72,10 @@ Continue based on `Recommended pattern`:
 
 Do not invoke `design-pattern-decision` again after reading a pattern skeleton unless the plan, tentative code, or current code summary materially changes.
 
+## Services
+
+A service is one deployed entry point (a Lambda on AWS). When creating one, or changing its entry point, processor, contracts, errors or logs, read [references/service/README.md](references/service/README.md) for the shape and its rules, then the file of its event source under [references/service/event-sources/](references/service/event-sources/) for what the handler receives and returns. Provider names are in [references/service/providers.md](references/service/providers.md).
+
 ## Generics
 
 - Use a type parameter when the same logic serves several types and the caller's own types must be checked at compile time. Do not use one for a single type, or where an interface already expresses the behavior.
