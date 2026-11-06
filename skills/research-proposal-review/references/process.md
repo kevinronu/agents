@@ -4,7 +4,10 @@ Four goals, in this order. How much each one takes depends on the doc.
 
 ## 1. Understand the doc
 
-Before any comment, say in a few lines what the doc proposes and which services, tables,
+Before any comment, say in one sentence what the doc proposes, plain enough that the user
+can repeat it when someone asks (for example: "That each account has a single person: every
+document and every first face is compared against what the account already has before it is
+approved"). Then say in a few lines how it works and which services, tables,
 queues and external systems it touches. Use the vocabulary of the trusted docs when there
 are any ([sources.md](sources.md)); otherwise the doc's own. A reviewer who cannot explain
 the design in plain words is not ready to find where it breaks.

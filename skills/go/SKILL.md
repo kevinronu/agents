@@ -127,6 +127,10 @@ Classify every new or renamed function or method before naming it. The first row
 
 - Use short, lowercase package names.
 - Do not use underscores or hyphens in package names.
+- Avoid a package name that callers want as a variable name (`bufio`, not `buf`), so they need no rename.
+- Rename an import only to avoid a collision with another import, to drop underscores from a generated package, or when its name says nothing about what it holds (`models`, `util`, `v1`). In a collision, rename the most local or project-specific import.
+- Write an import alias like a package name: lowercase, without mixedCaps or underscores (`docmodels`, not `docModels`). The alias is the name the file uses for the package, so it follows the same rules. Use the same alias for the same package in every file.
+- When a local variable hides a package that the code still uses in that scope, rename the import with a `pkg` suffix (`urlpkg`).
 
 ## Validation Methods
 
@@ -209,11 +213,12 @@ func BenchmarkProcess(b *testing.B) {
 
 For implementation, complete these checks in order:
 
-0. List every identifier the change adds or renames, exported or not, and check each against "Function and Method Names" and the Names section of `~/.claude/CLAUDE.md`. Rename before formatting.
-1. Format changed Go files in the derived scope with `gofmt -w <files>`.
-2. Format changed Go files in the derived scope with `goimports -w <files>`.
-3. Run `go test` only for scoped packages.
-4. Run `golangci-lint run` only for scoped packages.
+0. List every identifier the change adds or renames, exported or not, and check each against "Function and Method Names" and the Names section of [AGENTS.md](../../AGENTS.md). Rename before formatting.
+1. List every comment the change adds or edits, and check each against "Exported Identifiers" and the Comments and Documentation Comments sections of [AGENTS.md](../../AGENTS.md). When an invariant can be stated in code, state it there and drop the comment. Fix comments before formatting.
+2. Format changed Go files in the derived scope with `gofmt -w <files>`.
+3. Format changed Go files in the derived scope with `goimports -w <files>`.
+4. Run `go test` only for scoped packages.
+5. Run `golangci-lint run` only for scoped packages.
 
 ## Required Closeout
 

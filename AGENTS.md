@@ -124,7 +124,7 @@ Never write comments that:
 - Contain HTML, irrelevant history, or more information than the code's reader needs.
 - Depend on private context or have a connection to the code that is not obvious.
 
-Keep every necessary comment precise, local to the code it qualifies, and no more detailed than needed. Write it for a reader who does not share the author's private context. Update or delete any comment made inaccurate by the change; a misleading comment is worse than no comment.
+Keep every necessary comment precise, local to the code it qualifies, and no more detailed than needed. Write it for a reader who does not share the author's private context. Update or delete any comment made inaccurate by the change; a misleading comment is worse than no comment. A comment describes only the code that exists in the same change. When a change is split, check each comment against the part it lands in.
 
 ### Documentation Comments
 

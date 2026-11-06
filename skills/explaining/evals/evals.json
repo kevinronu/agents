@@ -1,0 +1,20 @@
+{
+  "skill": "explaining",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "lo de los dos días no entendí, de qué contador me hablas",
+      "expected": "Opens with why the 2-day window exists in one sentence. Names the counter Lambda (counters_shared-increment, event validation_counted) and says what it does, in the same sentence it first appears. Ends with the P2 timestamps (15:48 failure, 15:48:45 counter, 15:58 expiration). No headings, no closing offer."
+    },
+    {
+      "id": 2,
+      "prompt": "agregó un OIDC provider de Bitbucket para que o que",
+      "expected": "First sentence says what the pipeline gets from it (AWS access without a person's credentials). Then the chain: what the release build needs (the signing key), how it was done before (a person with a one-hour Betty grant), what the provider and the role change. Every term (OIDC provider, signing key, device report) defined where it first appears. Under one screen."
+    },
+    {
+      "id": 3,
+      "prompt": "y por que en oregon funciona",
+      "expected": "One-sentence answer (Oregon never tries to create the IAM resource), then the mechanism: IAM is global, only the Virginia root has the iam module, Oregon reads Virginia's state. Names the two terraform paths. Three to five sentences."
+    }
+  ]
+}
